@@ -28,8 +28,8 @@ namespace FlappyBird
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            Texture2D
-            player = new Player();
+           // Texture2D
+            //player = new Player();
         }
 
         protected override void Update(GameTime gameTime)
