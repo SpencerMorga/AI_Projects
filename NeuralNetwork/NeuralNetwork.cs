@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace NeuralNetwork
 {
-    class NeuralNetwork
+    public class NeuralNetwork
     {
-        
-        Layer[] layers;
-        ErrorFunction errorFunc;
-        ActivationFunction activationFunc;
+
+        public Layer[] layers { get; set; }
+        public ErrorFunction errorFunc { get; set; }
+        public ActivationFunction activationFunc { get; set; }
         public NeuralNetwork(ActivationFunction activation, ErrorFunction errorFunc,
         int[] neuronsPerLayer)
         {
