@@ -6,7 +6,18 @@ using System.Threading.Tasks;
 
 namespace FlappyBird
 {
-    internal class Pipe
+    internal class Pipe : Sprite
     {
+        public Pipe(Texture2D image, Vector2 position, Color color)
+            : base(image, position, color)
+        {
+
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            position.X -= 5;
+        }
+
     }
 }
