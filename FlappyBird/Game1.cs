@@ -13,6 +13,7 @@ namespace FlappyBird
         Player player;
         List<Pipe> pipes = new List<Pipe>();
         Texture2D pipetexture;
+        Texture2D pipeRtexture;
         TimeSpan pipespan;
         double currentTime = 0;
         public Game1()
@@ -37,6 +38,7 @@ namespace FlappyBird
            // Texture2D
             player = new Player(Content.Load<Texture2D>("turtle"), new Vector2(50, 10), Color.White);
             pipetexture = Content.Load<Texture2D>("pipe");
+            pipeRtexture = Content.Load<Texture2D>("pipeR");
         }
 
         protected override void Update(GameTime gameTime)
@@ -47,17 +49,28 @@ namespace FlappyBird
             // TODO: Add your update logic here
 
             KeyboardState ks = Keyboard.GetState();
+            Random random = new Random();
+
             pipespan += gameTime.ElapsedGameTime;
-            if (pipespan > TimeSpan.FromMilliseconds(1000))
+
+            if (pipespan > TimeSpan.FromMilliseconds(2000))
             {
-                pipes.Add(new Pipe(pipetexture, new Vector2(GraphicsDevice.Viewport.Width - 10, 50), Color.White));
+                pipes.Add(new Pipe(pipetexture, new Vector2(GraphicsDevice.Viewport.Width, -random.Next(1, 150)), Color.White, pipeRtexture));
                 pipespan = TimeSpan.Zero;
+                
             }
-            player.Update(gameTime, ks);
+
+            
+
             foreach (Pipe pipe in pipes)
             {
+                if (player.hitbox.Intersects(pipe.hitbox)) 
+                {
+                    break;
+                }
                 pipe.Update(gameTime);
             }
+            player.Update(gameTime, ks);
             base.Update(gameTime);
         }
 
