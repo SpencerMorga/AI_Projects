@@ -14,7 +14,11 @@ namespace FlappyBird
         List<Pipe> pipes = new List<Pipe>();
         Texture2D pipetexture;
         Texture2D pipeRtexture;
+        SpriteFont text;
         TimeSpan pipespan;
+        int score = -1  ;
+        bool isDead = false;
+        bool hasFirstPassed = false;
         double currentTime = 0;
         public Game1()
         {
@@ -39,6 +43,7 @@ namespace FlappyBird
             player = new Player(Content.Load<Texture2D>("turtle"), new Vector2(50, 10), Color.White);
             pipetexture = Content.Load<Texture2D>("pipe");
             pipeRtexture = Content.Load<Texture2D>("pipeR");
+            text = Content.Load<SpriteFont>("text"); 
         }
 
         protected override void Update(GameTime gameTime)
@@ -53,20 +58,26 @@ namespace FlappyBird
 
             pipespan += gameTime.ElapsedGameTime;
 
+        
+   
             if (pipespan > TimeSpan.FromMilliseconds(2000))
             {
-                pipes.Add(new Pipe(pipetexture, new Vector2(GraphicsDevice.Viewport.Width, -random.Next(1, 150)), Color.White, pipeRtexture));
-                pipespan = TimeSpan.Zero;
                 
+                pipes.Add(new Pipe(pipetexture, pipeRtexture, new Vector2(GraphicsDevice.Viewport.Width, -random.Next(1, 150)), Color.White));
+                pipespan = TimeSpan.Zero;
+                score++;
             }
 
-            
+            if (isDead)
+            {
+                Exit();        
+            }
 
             foreach (Pipe pipe in pipes)
             {
-                if (player.hitbox.Intersects(pipe.hitbox)) 
+                if (player.hitbox.Intersects(pipe.hitbox) || player.hitbox.Intersects(pipe.hitboxR)) 
                 {
-                    break;
+                    isDead = true;
                 }
                 pipe.Update(gameTime);
             }
@@ -80,7 +91,7 @@ namespace FlappyBird
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
-
+            _spriteBatch.DrawString(text, score.ToString(), new Vector2(0, 0), Color.White);
             player.Draw(_spriteBatch);
             foreach (Pipe pipe in pipes)
             {
