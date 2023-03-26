@@ -13,7 +13,7 @@ namespace FlappyBird
         bool jump = false;
 
         public double velocity { get; set; } = 0;
-        const double acceleration = .3;
+        const double acceleration = .4;
         double currentTime = 0; 
         public Player(Texture2D image, Vector2 position, Color color)
             : base(image, position, color)
@@ -39,7 +39,7 @@ namespace FlappyBird
 
             if (keyboard.IsKeyUp(Keys.Space)  && jump) 
             {
-                velocity = -8;
+                velocity = -5;
                 jump = false;
             }
         }
