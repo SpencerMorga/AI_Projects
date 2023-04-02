@@ -22,17 +22,12 @@ namespace NeuralNetwork
         {
             this.random = random == null ? new Random() : random;
             this.mutationRate = mutationRate;
-<<<<<<< HEAD
         }
 
         public void Fitness()
         {
-            List<int> list = new List<int>();
-            int a = list.Count();
-=======
-            this.neuronsPerLayer = neuronsPerLayer;
-            population = new (NeuralNetwork, int)[populationCount];
->>>>>>> ca3d4eeb6015f1fa6a2194c9ed2fba5b7176d04d
+
+
         }
 
         public void Mutate(NeuralNetwork net, double mutationRate, Random random)
