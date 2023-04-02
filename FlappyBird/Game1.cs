@@ -68,7 +68,7 @@ namespace FlappyBird
                 pipes.Add(new Pipe(pipetexture, pipeRtexture, new Vector2(GraphicsDevice.Viewport.Width, -random.Next(1, 150)), Color.White));
                 pipespan = TimeSpan.Zero;
                 score++;
-            }
+            }  
 
             if (isDead)
             {
