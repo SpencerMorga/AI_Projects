@@ -28,8 +28,8 @@ namespace FlappyBird
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-           // Texture2D
-            //player = new Player();
+            Texture2D
+            player = new Player(Content.Load<Texture2D>(/*file name*/), new Vector2(0, 100), Color.Black);
         }
 
         protected override void Update(GameTime gameTime)
@@ -43,7 +43,7 @@ namespace FlappyBird
             
             if (ks.IsKeyDown(Keys.Space))
             {
-
+               
             }
 
             base.Update(gameTime);

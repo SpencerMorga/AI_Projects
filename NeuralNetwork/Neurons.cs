@@ -10,7 +10,7 @@ namespace NeuralNetwork
 {
     public class Neurons
     {
-        double bias;
+        public double bias;
         public DendriteBase[] dendrites;
         public double Output { get; set; }
 
