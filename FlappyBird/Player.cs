@@ -10,20 +10,38 @@ namespace FlappyBird
 {
     internal class Player : Sprite
     {
+        bool jump = false;
+
         public double velocity { get; set; } = 0;
-        const double acceleration = -9.8;
+        const double acceleration = .4;
+        double currentTime = 0; 
         public Player(Texture2D image, Vector2 position, Color color)
             : base(image, position, color)
         {
 
-        }
+        } 
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, KeyboardState keyboard)
         {
-            position.Y += (float)(gameTime.ElapsedGameTime.TotalSeconds * velocity);
+            velocity += acceleration;
+            //if (gameTime.ElapsedGameTime.TotalMilliseconds - currentTime > 0.0001)
+            //{
+            //    velocity += acceleration;
+            //    currentTime = gameTime.ElapsedGameTime.TotalMilliseconds;
+            //}
+            position.Y += (float)velocity;
 
-            velocity += gameTime.ElapsedGameTime.TotalSeconds * acceleration;
+            
+            if (keyboard.IsKeyDown(Keys.Space)) 
+            { 
+                jump = true;
+            }
+
+            if (keyboard.IsKeyUp(Keys.Space)  && jump) 
+            {
+                velocity = -5;
+                jump = false;
+            }
         }
-
     }
 }
