@@ -1,10 +1,11 @@
-﻿using System;
+﻿using NeuralNetIntro;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NeuralNetwork
+namespace NeuralNetworks
 {
     internal class GeneticLearning
     {
@@ -12,16 +13,25 @@ namespace NeuralNetwork
         Random random;
         double mutationRate;
         int neuronsPerLayer;
+        ErrorFunction errorFunc;
+        ActivationFunction actFunc;
 
         (NeuralNetwork, int)[] population;
         // population going to be looped through, each int value assigned to the return value (score) of the function in flappy bird. net will be created locally
         // function details: takes the net (created in this class), returns fitness value (done in flappy bird)
         // from then, create train
 
-        public GeneticLearning(double mutationRate, int neuronsPerLayer, int populationCount, Random? random = null)
+        public GeneticLearning(double mutationRate, int[] neuronsPerLayer, int populationCount, ErrorFunction ErrorFunc, ActivationFunction ActFunc, Random? random = null)
         {
             this.random = random == null ? new Random() : random;
             this.mutationRate = mutationRate;
+            population = new (NeuralNetwork, int)[populationCount];
+
+            for (int i = 0; i < populationCount; i++)
+            {
+                NeuralNetwork newNet = new NeuralNetwork(ActFunc, ErrorFunc, neuronsPerLayer);
+                population[i] = (newNet, ); 
+            }
         }
 
         public void Fitness()
@@ -74,6 +84,11 @@ namespace NeuralNetwork
                     loseNeuron.bias = winNeuron.bias;
                 }
             }
+        }
+
+        public void Train(double[][] input)
+        {
+            
         }
     }
 }

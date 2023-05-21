@@ -21,23 +21,19 @@ namespace FlappyBird
 
         } 
 
-        public void Update(GameTime gameTime, KeyboardState keyboard)
+        public void Update(GameTime gameTime, double result)
         {
             velocity += acceleration;
-            //if (gameTime.ElapsedGameTime.TotalMilliseconds - currentTime > 0.0001)
-            //{
-            //    velocity += acceleration;
-            //    currentTime = gameTime.ElapsedGameTime.TotalMilliseconds;
-            //}
+
             position.Y += (float)velocity;
 
             
-            if (keyboard.IsKeyDown(Keys.Space)) 
+            if (result > 0) 
             { 
                 jump = true;
             }
 
-            if (keyboard.IsKeyUp(Keys.Space)  && jump) 
+            if (result < 0  && jump) 
             {
                 velocity = -5;
                 jump = false;

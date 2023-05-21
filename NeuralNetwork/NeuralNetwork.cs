@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NeuralNetwork
+namespace NeuralNetworks
 {
     public class NeuralNetwork
     {
@@ -66,6 +66,7 @@ namespace NeuralNetwork
              return total / inputs.Length;
             
         }
+
          
     }
 }
