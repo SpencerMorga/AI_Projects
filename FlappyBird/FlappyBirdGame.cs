@@ -4,74 +4,129 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 using NeuralNetworks;
 
 namespace FlappyBird
 {
     internal class FlappyBirdGame
     {
+        //5/28/23: next time incorporate genetic learning into this class
         GraphicsDevice graphics;
-        Player player;
+        SpriteBatch spriteBatch;
+
+        Player[] players;
         List<Pipe> pipes = new List<Pipe>();
+
         Texture2D pipetexture;
         Texture2D pipeRtexture;
         TimeSpan pipespan;
-        NeuralNetwork net;
-        bool isDead;
-        Pipe nearestPipe;
-        
-        public FlappyBirdGame(Player Player, List<Pipe> Pipes, Texture2D Pipe, Texture2D PipeR, TimeSpan Pipespan, GraphicsDevice graphics, NeuralNetwork net)
-        {
-            player = Player;
-            pipes = Pipes;
-            pipetexture = Pipe;
-            pipeRtexture = PipeR;
-            pipespan = Pipespan;
-            this.graphics = graphics;
-            this.net = net;
-            nearestPipe = Pipes[0];
-        }
 
-        
-        public void Update(GameTime gameTime)
+        bool shouldIncScore = false;
+        bool allDead = true;
+
+        Pipe nearestPipe;
+        Random random = new Random();
+
+        public FlappyBirdGame(int playersCount, Texture2D image, Vector2 position, Color color, Texture2D Pipe, Texture2D PipeR, GraphicsDevice graphics)
         {
-            if (isDead)
+            players = new Player[playersCount];
+            for (int i = 0; i < playersCount; i++)
             {
-                return;
+                players[i] = new Player(image, position, color);
             }
 
-            Random random = new Random();
+            pipes = new List<Pipe>();
+            pipetexture = Pipe;
+            pipeRtexture = PipeR;
+        
+            this.graphics = graphics;
+
+            pipes.Add(new Pipe(pipetexture, new Vector2(graphics.Viewport.Width, -random.Next(1, 150)), Color.White, pipeRtexture));
+            pipespan = TimeSpan.Zero;
+            nearestPipe = pipes[0];
+        }
+
+        public void Update(GameTime gameTime)
+        {           
             pipespan += gameTime.ElapsedGameTime;
 
             if (pipespan > TimeSpan.FromMilliseconds(2000))
             {
                 pipes.Add(new Pipe(pipetexture, new Vector2(graphics.Viewport.Width, -random.Next(1, 150)), Color.White, pipeRtexture));
                 pipespan = TimeSpan.Zero;
-
+                shouldIncScore = true;
             }
+            allDead = true;
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (players[i].position.Y > graphics.Viewport.Height || players[i].position.Y < 0)
+                {
+                    players[i].isDead = true;
+                }
 
-            if (player.position.Y > graphics.Viewport.Height || player.position.Y < 0) isDead = true;
+                if (shouldIncScore)
+                {
+                    players[i].score++;
+                }
+
+                foreach (Pipe pipe in pipes)
+                {
+
+                    if (players[i].hitbox.Intersects(pipe.hitbox) || players[i].hitbox.Intersects(pipe.hitboxR))
+                    {
+                        players[i].isDead = true;
+                    }
+                }
+                //ill get that net later from genetic learning
+                if (!players[i].isDead)
+                {
+                    players[i].Update(gameTime, net.Compute(new double[] { (nearestPipe.getGapCenter().Item1 - players[i].position.X), (nearestPipe.getGapCenter().Item2 - players[i].position.Y) })[0]);
+                    allDead = false;
+                }
+            }
 
             foreach (Pipe pipe in pipes)
             {
-                if (player.hitbox.Intersects(pipe.hitbox) || player.hitbox.Intersects(pipe.hitboxR)
-                {
-                    isDead = true;
-                }
-
                 if (getPipeDist(pipe) < getPipeDist(nearestPipe))
                 {
                     nearestPipe = pipe;
                 }
                 pipe.Update(gameTime);
-            }//KEEP TRACK OF NEAREST PIPE, compute
-            player.Update(gameTime, net.Compute(new double[] {(nearestPipe.getGapCenter().Item1), (nearestPipe.getGapCenter().Item2)})[0]);
-            
+            }
+        }
+
+        public void Reset()
+        {
+
         }
 
         public double getPipeDist(Pipe pipe)
         {
-            return Math.Sqrt(Math.Pow(pipe.getGapCenter().Item1 - player.position.X, 2) + Math.Pow(pipe.getGapCenter().Item2 - player.position.Y, 2));
+            return Math.Sqrt(Math.Pow(pipe.getGapCenter().Item1 - players[0].position.X, 2) + Math.Pow(pipe.getGapCenter().Item2 - players[0].position.Y, 2));
         }
+
+        public void Draw(GameTime gameTime)
+        {
+            graphics.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin();
+
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (!players[i].isDead)
+                {
+                   players[i].Draw(spriteBatch);
+                }
+            }
+                
+            foreach (Pipe pipe in pipes)
+            {
+                pipe.Draw(spriteBatch);
+            }
+            spriteBatch.End();
+        }
+
+        
     }
 }

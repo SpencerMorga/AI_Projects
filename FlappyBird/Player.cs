@@ -13,6 +13,8 @@ namespace FlappyBird
         bool jump = false;
 
         public double velocity { get; set; } = 0;
+        public int score;
+        public bool isDead;
         const double acceleration = .4;
         double currentTime = 0; 
         public Player(Texture2D image, Vector2 position, Color color)

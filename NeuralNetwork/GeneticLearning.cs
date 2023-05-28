@@ -16,7 +16,7 @@ namespace NeuralNetworks
         ErrorFunction errorFunc;
         ActivationFunction actFunc;
 
-        (NeuralNetwork, int)[] population;
+        NeuralNetwork[] population;
         // population going to be looped through, each int value assigned to the return value (score) of the function in flappy bird. net will be created locally
         // function details: takes the net (created in this class), returns fitness value (done in flappy bird)
         // from then, create train
@@ -25,19 +25,13 @@ namespace NeuralNetworks
         {
             this.random = random == null ? new Random() : random;
             this.mutationRate = mutationRate;
-            population = new (NeuralNetwork, int)[populationCount];
+            population = new NeuralNetwork[populationCount];
 
             for (int i = 0; i < populationCount; i++)
             {
                 NeuralNetwork newNet = new NeuralNetwork(ActFunc, ErrorFunc, neuronsPerLayer);
-                population[i] = (newNet, ); 
+                population[i] = newNet;
             }
-        }
-
-        public void Fitness()
-        {
-
-
         }
 
         public void Mutate(NeuralNetwork net, double mutationRate, Random random)

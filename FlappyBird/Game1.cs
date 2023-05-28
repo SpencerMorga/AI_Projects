@@ -10,6 +10,7 @@ namespace FlappyBird
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        FlappyBirdGame birdGames;
         Player player;
         List<Pipe> pipes = new List<Pipe>();
         Texture2D pipetexture;
@@ -26,7 +27,7 @@ namespace FlappyBird
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            birdGames = new FlappyBirdGame(100, Content.Load<Texture2D>("turtle"), new Vector2(50, 10), Color.White, pipetexture, pipeRtexture, graphics, )
             base.Initialize();
         }
 
@@ -35,8 +36,7 @@ namespace FlappyBird
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-           // Texture2D
-            player = new Player(Content.Load<Texture2D>("turtle"), new Vector2(50, 10), Color.White);
+           // Texture2Dplayer = new Player(Content.Load<Texture2D>("turtle"), new Vector2(50, 10), Color.White);
             pipetexture = Content.Load<Texture2D>("pipe");
             pipeRtexture = Content.Load<Texture2D>("pipeR");
         }
@@ -46,47 +46,16 @@ namespace FlappyBird
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
 
-            KeyboardState ks = Keyboard.GetState();
-            Random random = new Random();
 
-            pipespan += gameTime.ElapsedGameTime;
 
-            if (pipespan > TimeSpan.FromMilliseconds(2000))
-            {
-                pipes.Add(new Pipe(pipetexture, new Vector2(GraphicsDevice.Viewport.Width, -random.Next(1, 150)), Color.White, pipeRtexture));
-                pipespan = TimeSpan.Zero;
-                
-            }
 
-            
-
-            foreach (Pipe pipe in pipes)
-            {
-                if (player.hitbox.Intersects(pipe.hitbox)) 
-                {
-                    break;
-                }
-                pipe.Update(gameTime);
-            }
-  
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
-            _spriteBatch.Begin();
-
-            player.Draw(_spriteBatch);
-            foreach (Pipe pipe in pipes)
-            {
-                pipe.Draw(_spriteBatch);
-            }
-            _spriteBatch.End();
+            
 
             base.Draw(gameTime);
         }
