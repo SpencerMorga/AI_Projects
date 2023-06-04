@@ -7,34 +7,19 @@ using System.Threading.Tasks;
 
 namespace NeuralNetworks
 {
-    internal class GeneticLearning
+    public class GeneticLearning
     {
 
         Random random;
         double mutationRate;
-        int neuronsPerLayer;
-        ErrorFunction errorFunc;
-        ActivationFunction actFunc;
 
-        NeuralNetwork[] population;
-        // population going to be looped through, each int value assigned to the return value (score) of the function in flappy bird. net will be created locally
-        // function details: takes the net (created in this class), returns fitness value (done in flappy bird)
-        // from then, create train
-
-        public GeneticLearning(double mutationRate, int[] neuronsPerLayer, int populationCount, ErrorFunction ErrorFunc, ActivationFunction ActFunc, Random? random = null)
+        public GeneticLearning(double mutationRate, Random? random = null)
         {
             this.random = random == null ? new Random() : random;
             this.mutationRate = mutationRate;
-            population = new NeuralNetwork[populationCount];
-
-            for (int i = 0; i < populationCount; i++)
-            {
-                NeuralNetwork newNet = new NeuralNetwork(ActFunc, ErrorFunc, neuronsPerLayer);
-                population[i] = newNet;
-            }
         }
 
-        public void Mutate(NeuralNetwork net, double mutationRate, Random random)
+        public void Mutate(NeuralNetwork net)
         {
             foreach (Layer layer in net.layers)
             {
@@ -56,7 +41,7 @@ namespace NeuralNetworks
             }    
         }
 
-        public void Crossover(NeuralNetwork winner, NeuralNetwork loser, Random random)
+        public void Crossover(NeuralNetwork winner, NeuralNetwork loser)
         {
             for (int i = 0; i < winner.layers.Length; i++)
             {
@@ -80,9 +65,23 @@ namespace NeuralNetworks
             }
         }
 
-        public void Train(double[][] input)
+        public void Train((NeuralNetwork, int)[] population) 
         {
-            
+            Array.Sort(population, (a, b) => a.CompareTo(b));
+
+            int start = (int)(population.Length * 0.1);
+            int end = (int)(population.Length * 0.9);
+
+            for (int i = start; i < end; i++)
+            {
+                Crossover(population[random.Next(start)].Item1, population[i].Item1);
+                Mutate(population[i].Item1);
+            }
+
+            for (int i = end; i < population.Length; i++)
+            {
+                population[i].Item1.Randomize(random, -1, 1);
+            }
         }
     }
 }

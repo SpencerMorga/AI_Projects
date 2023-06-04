@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
+using NeuralNetIntro;
 using NeuralNetworks;
 
 namespace FlappyBird
@@ -28,12 +29,22 @@ namespace FlappyBird
         Pipe nearestPipe;
         Random random = new Random();
 
-        public FlappyBirdGame(int playersCount, Texture2D image, Vector2 position, Color color, Texture2D Pipe, Texture2D PipeR, GraphicsDevice graphics)
+        NeuralNetwork[] nets;
+
+        GeneticLearning geneticLearning;
+        public FlappyBirdGame(int playersCount, ActivationFunction activation, ErrorFunction errorFunc, int[] neuronsPerLayer, Texture2D image, Vector2 position, Color color, Texture2D Pipe, Texture2D PipeR, GraphicsDevice graphics)
         {
             players = new Player[playersCount];
             for (int i = 0; i < playersCount; i++)
             {
                 players[i] = new Player(image, position, color);
+            }
+
+            geneticLearning = new GeneticLearning(0.1, random);
+            nets = new NeuralNetwork[playersCount];
+            for (int i = 0;i < playersCount; i++)
+            {
+                nets[i] = new NeuralNetwork(activation, errorFunc, neuronsPerLayer);
             }
 
             pipes = new List<Pipe>();
@@ -78,10 +89,10 @@ namespace FlappyBird
                         players[i].isDead = true;
                     }
                 }
-                //ill get that net later from genetic learning
+
                 if (!players[i].isDead)
                 {
-                    players[i].Update(gameTime, net.Compute(new double[] { (nearestPipe.getGapCenter().Item1 - players[i].position.X), (nearestPipe.getGapCenter().Item2 - players[i].position.Y) })[0]);
+                    players[i].Update(gameTime, nets[i].Compute(new double[] { (nearestPipe.getGapCenter().Item1 - players[i].position.X), (nearestPipe.getGapCenter().Item2 - players[i].position.Y) })[0]);
                     allDead = false;
                 }
             }
@@ -98,7 +109,24 @@ namespace FlappyBird
 
         public void Reset()
         {
+            allDead = false;
+            
+            (NeuralNetwork, int)[] population = new (NeuralNetwork, int)[players.Length];
+            for (int i = 0; i < population.Length; i++)
+            {
+                population[i] = (nets[i], players[i].score);
+            }
 
+            geneticLearning.Train(population);
+
+            pipes.Clear();
+
+            foreach (Player bird in players)
+            {
+                bird.isDead = false;
+                bird.score = 0;
+                bird.position = new Vector2(50, 10);
+            }
         }
 
         public double getPipeDist(Pipe pipe)

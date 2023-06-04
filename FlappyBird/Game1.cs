@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using NeuralNetIntro;
 using System;
 using System.Collections.Generic;
 
@@ -16,6 +17,9 @@ namespace FlappyBird
         Texture2D pipetexture;
         Texture2D pipeRtexture;
         TimeSpan pipespan;
+
+        
+
         double currentTime = 0;
         public Game1()
         {
@@ -27,7 +31,7 @@ namespace FlappyBird
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            birdGames = new FlappyBirdGame(100, Content.Load<Texture2D>("turtle"), new Vector2(50, 10), Color.White, pipetexture, pipeRtexture, graphics, )
+            birdGames = new FlappyBirdGame(100, Content.Load<Texture2D>("turtle"), new Vector2(50, 10), Color.White, pipetexture, pipeRtexture, GraphicsDevice);
             base.Initialize();
         }
 
