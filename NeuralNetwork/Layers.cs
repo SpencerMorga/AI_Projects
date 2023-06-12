@@ -17,7 +17,7 @@ namespace NeuralNetworks
         {
             activationFunction = activation;
             Neurons = new Neurons[neuronCount];
-            
+            Outputs = new double[neuronCount];
             for (int i = 0; i < neuronCount; i++)
             {
                 if (previousLayer != null)

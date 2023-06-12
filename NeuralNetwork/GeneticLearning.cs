@@ -53,12 +53,12 @@ namespace NeuralNetworks
 
                 for(int j = (flip ? 0 : cutindex); j < (flip ? cutindex : winLayer.Neurons.Length); j++)
                 {
-                    Neurons winNeuron = winLayer.Neurons[i];
-                    Neurons loseNeuron = loseLayer.Neurons[i];
+                    Neurons winNeuron = winLayer.Neurons[j];
+                    Neurons loseNeuron = loseLayer.Neurons[j];
 
                     for (int k = 0; k < winNeuron.dendrites.Length; k++)
                     {
-                        loseNeuron.dendrites[i].weight = winNeuron.dendrites[i].weight;
+                        loseNeuron.dendrites[k].weight = winNeuron.dendrites[k].weight;
                     }
                     loseNeuron.bias = winNeuron.bias;
                 }
@@ -67,7 +67,7 @@ namespace NeuralNetworks
 
         public void Train((NeuralNetwork, int)[] population) 
         {
-            Array.Sort(population, (a, b) => a.CompareTo(b));
+            Array.Sort(population, (a, b) => a.Item2.CompareTo(b.Item2));
 
             int start = (int)(population.Length * 0.1);
             int end = (int)(population.Length * 0.9);

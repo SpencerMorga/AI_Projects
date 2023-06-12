@@ -15,11 +15,11 @@ namespace NeuralNetworks
         public Layer[] layers { get; set; }
         public ErrorFunction errorFunc { get; set; }
         public ActivationFunction activationFunc { get; set; }
-        public NeuralNetwork(ActivationFunction activation, ErrorFunction errorFunc,
+        public NeuralNetwork(ActivationFunction activation, /* ErrorFunction errorFunc, */
         int[] neuronsPerLayer)
         {
             activationFunc = activation;
-            this.errorFunc = errorFunc;
+           // this.errorFunc = errorFunc;
             layers = new Layer[neuronsPerLayer.Length];
 
             for (int i = 0; i < neuronsPerLayer.Length; i++)
@@ -56,16 +56,16 @@ namespace NeuralNetworks
             return layers[layers.Length - 1].Compute();
         }
 
-        public double GetError(double[] inputs, double[] desiredOutputs)
-        {
-            double total = 0;
-            for (int i = 0; i < inputs.Length; i++)
-            {
-                total += errorFunc.Function(Compute(inputs)[i], desiredOutputs[i]);
-            }
-             return total / inputs.Length;
+        //public double GetError(double[] inputs, double[] desiredOutputs)
+        //{
+        //    double total = 0;
+        //    for (int i = 0; i < inputs.Length; i++)
+        //    {
+        //        total += errorFunc.Function(Compute(inputs)[i], desiredOutputs[i]);
+        //    }
+        //     return total / inputs.Length;
             
-        }
+        //}
 
          
     }

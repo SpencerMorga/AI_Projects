@@ -21,14 +21,16 @@ namespace NeuralNetworks
         public Neurons(ActivationFunction activationFunction, Neurons[]? previousNeurons)
         {
             this.activationFunction = activationFunction;
-            dendrites = new Dendrites[previousNeurons.Length];
-            for (int i = 0; i < previousNeurons.Length; i++)
+            
+            if (previousNeurons == null)
             {
-                if (previousNeurons != null)
-                {
-                    dendrites[i] = new InputDendrite();
-                }
-                else
+                dendrites = new DendriteBase[1];
+                dendrites[0] = new InputDendrite();
+            }    
+            else
+            {
+                dendrites = new DendriteBase[previousNeurons.Length];
+                for (int i = 0; i < previousNeurons.Length; i++)
                 {
                     dendrites[i] = new Dendrites(previousNeurons[i]);
                 }

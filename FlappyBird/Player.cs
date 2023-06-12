@@ -40,6 +40,11 @@ namespace FlappyBird
                 velocity = -5;
                 jump = false;
             }
+
+            //if (jump)
+            //{
+
+            //}
         }
     }
 }

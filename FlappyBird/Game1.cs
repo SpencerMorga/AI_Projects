@@ -10,15 +10,14 @@ namespace FlappyBird
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        private SpriteBatch spriteBatch;
+        
         FlappyBirdGame birdGames;
         Player player;
         List<Pipe> pipes = new List<Pipe>();
         Texture2D pipetexture;
         Texture2D pipeRtexture;
         TimeSpan pipespan;
-
-        
 
         double currentTime = 0;
         public Game1()
@@ -31,13 +30,13 @@ namespace FlappyBird
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            birdGames = new FlappyBirdGame(100, Content.Load<Texture2D>("turtle"), new Vector2(50, 10), Color.White, pipetexture, pipeRtexture, GraphicsDevice);
             base.Initialize();
+            birdGames = new FlappyBirdGame(100, new ActivationFunction(ActivationFunction.TanH, ActivationFunction.TanH_deriv), new int[] { 2, 2, 1 }, Content.Load<Texture2D>("turtle"), new Vector2(50, 10), Color.White, pipetexture, pipeRtexture, GraphicsDevice);
         }
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
            // Texture2Dplayer = new Player(Content.Load<Texture2D>("turtle"), new Vector2(50, 10), Color.White);
@@ -50,16 +49,14 @@ namespace FlappyBird
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-
-
-
+            birdGames.Update(gameTime);
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            
+            birdGames.Draw(spriteBatch);
 
             base.Draw(gameTime);
         }
