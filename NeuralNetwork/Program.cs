@@ -40,7 +40,7 @@ namespace NeuralNetworks
             }
 
             GeneticLearning geneticLearning = new GeneticLearning(0.1, random);
-            while (nets[0].Item2 < -0.01)
+            while (nets[0].Item2 < -10)
             {      
                 geneticLearning.Train(nets);
                 for (int i = 0; i < 100; i++)
