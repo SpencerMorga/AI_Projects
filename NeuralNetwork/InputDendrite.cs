@@ -8,7 +8,7 @@ namespace NeuralNetworks
 {
     public class InputDendrite : DendriteBase
     {
-        public double weight { get; set; }
+        
         public double Input { get; set; }
 
         public override double Compute()

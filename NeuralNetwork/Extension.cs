@@ -17,7 +17,7 @@ namespace NeuralNetworks
             {
                 sum += net.GetError(inputs[i], desiredOutputs[i], errorFunc);
             }
-            return sum / inputs.Length;
+            return sum /*/ inputs.Length*/;
         }
         public static double GetError(this NeuralNetwork net, double[] inputs, double[] desiredOutputs, ErrorFunction errorFunc)
         {
@@ -27,7 +27,7 @@ namespace NeuralNetworks
             {
                 total += errorFunc.Function(computed[i], desiredOutputs[i]);
             }
-            return total / inputs.Length;
+            return total / desiredOutputs.Length;
 
         }
     }

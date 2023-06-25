@@ -9,7 +9,7 @@ namespace NeuralNetworks
     public abstract class DendriteBase
     {
         public abstract double Compute();
-        public double weight;
+        public double weight { get; set; }
 
     }
 }

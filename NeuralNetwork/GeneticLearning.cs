@@ -21,7 +21,7 @@ namespace NeuralNetworks
 
         public void Mutate(NeuralNetwork net)
         {
-            foreach (Layer layer in net.layers)
+            foreach (Layer layer in net.layers.Skip(1))
             {
                 foreach(Neurons neuron in layer.Neurons)
                 {
@@ -80,7 +80,7 @@ namespace NeuralNetworks
 
             for (int i = end; i < population.Length; i++)
             {
-                population[i].Item1.Randomize(random, -1, 1);
+                population[i].Item1.Randomize(random, -5, 5);
             }
         }
     }

@@ -28,10 +28,11 @@ namespace NeuralNetworks
                 else layers[i] = new Layer(activation, neuronsPerLayer[i], null);
 
             }
+            
         }
         public void Randomize(Random random, double min, double max)
         {
-            for (int i = 0; i < layers.Length; i++)
+            for (int i = 1; i < layers.Length; i++)
             {
                 layers[i].Randomize(random, min, max);
             }
@@ -44,16 +45,16 @@ namespace NeuralNetworks
                 Neurons neuron = layers[0].Neurons[i];
                 for (int j = 0; j < neuron.dendrites.Length; j++)
                 {
-                    ((InputDendrite)neuron.dendrites[j]).Input = inputs[i];
+                   neuron.Output = inputs[i];
                 }
             }
 
-            for (int i = 0; i < layers.Length - 1; i++)
+            for (int i = 1; i < layers.Length; i++)
             {
                 layers[i].Compute();
             }
 
-            return layers[layers.Length - 1].Compute();
+            return layers[layers.Length - 1].Outputs;
         }
 
         //public double GetError(double[] inputs, double[] desiredOutputs)

@@ -9,7 +9,7 @@ namespace NeuralNetworks
     public class Dendrites : DendriteBase
     {
         public Neurons Previous { get; set; }
-        public double weight {  get; set; }
+
 
         public Dendrites(Neurons previous)
         {
