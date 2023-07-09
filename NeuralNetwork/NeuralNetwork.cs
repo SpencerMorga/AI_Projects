@@ -28,7 +28,6 @@ namespace NeuralNetworks
                 else layers[i] = new Layer(activation, neuronsPerLayer[i], null);
 
             }
-            
         }
         public void Randomize(Random random, double min, double max)
         {
@@ -37,24 +36,40 @@ namespace NeuralNetworks
                 layers[i].Randomize(random, min, max);
             }
         }
+        //public double[] Compute(double[] inputs)
+        //{
+
+        //    for (int i = 0; i < layers[0].Neurons.Length; i++)
+        //    {
+        //        Neurons neuron = layers[0].Neurons[i];
+        //        for (int j = 0; j < neuron.dendrites.Length; j++)
+        //        {
+        //           neuron.Output = inputs[i];
+        //        }
+        //    }
+
+        //    for (int i = 1; i < layers.Length; i++)
+        //    {
+        //        layers[i].Compute();
+        //    }
+
+        //    return layers[layers.Length - 1].Outputs;
+        //}
+
         public double[] Compute(double[] inputs)
         {
-
+            if (inputs == null || inputs.Length != layers[0].Neurons.Length) { throw new Exception("Inputs must be the same length as input count"); }
             for (int i = 0; i < layers[0].Neurons.Length; i++)
             {
-                Neurons neuron = layers[0].Neurons[i];
-                for (int j = 0; j < neuron.dendrites.Length; j++)
-                {
-                   neuron.Output = inputs[i];
-                }
+                layers[0].Neurons[i].Output = inputs[i];
             }
-
+            double[] outputs = null;
             for (int i = 1; i < layers.Length; i++)
             {
-                layers[i].Compute();
+                outputs = layers[i].Compute();
             }
 
-            return layers[layers.Length - 1].Outputs;
+            return outputs;
         }
 
         //public double GetError(double[] inputs, double[] desiredOutputs)
@@ -65,9 +80,9 @@ namespace NeuralNetworks
         //        total += errorFunc.Function(Compute(inputs)[i], desiredOutputs[i]);
         //    }
         //     return total / inputs.Length;
-            
+
         //}
 
-         
+
     }
 }
