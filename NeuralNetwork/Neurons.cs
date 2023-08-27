@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -16,11 +18,15 @@ namespace NeuralNetworks
 
         public double Input { get; set; }
         
-        public ActivationFunction activationFunction { get; set; }
+        public double Delta { get; set; }
+        double biasUpdate;
 
-        public Neurons(ActivationFunction activationFunction, Neurons[]? previousNeurons)
+        public ActivationFunction activationFunction { get; set; }
+        public ErrorFunction errorFunction { get; set; }
+        public Neurons(ActivationFunction activationFunction, ErrorFunction errorFunction, Neurons[]? previousNeurons)
         {
             this.activationFunction = activationFunction;
+            this.errorFunction = errorFunction;
             
             if (previousNeurons == null)
             {
@@ -36,7 +42,7 @@ namespace NeuralNetworks
                 }
             }
         }
-
+        //E.D.D.E.N. : engineered developmental dramatic electrical network
         public void Randomize(Random random, double max, double min)
         {
             for (int i = 0; i < dendrites.Length; i++)
@@ -59,6 +65,32 @@ namespace NeuralNetworks
 
             Output = activationFunction.Function(Input);
             return Output;
+        }
+
+        public void Backpropagation(double learningRate)
+        {
+            //output (first) layers, run the below line calcualtion. this will set initial delta with learningrate*-derivative to be modifided continuously
+            //for all hidden layers, cycle this function with delta * act deriv * weight
+            //check wiki for additional confirmation about process
+            Delta = learningRate * -(errorFunction.Derivative(activationFunction.Derivative(Compute()), Output) * activationFunction.Derivative(Compute()) * Input);
+            for (int i = 0; i < dendrites.Length; i++)
+            {
+                dendrites[i].WeightUpdate += Delta;
+            }
+            biasUpdate += Delta;
+
+            //previous neuron delta set to weight * current delta...? access from dendrite
+        }
+
+        public void ApplyUpdates()
+        {
+            bias += biasUpdate;
+            biasUpdate = 0;
+
+            for (int i = 0; i < dendrites.Length; i++)
+            {
+                dendrites[i].ApplyUpdates();
+            }
         }
     }
 }

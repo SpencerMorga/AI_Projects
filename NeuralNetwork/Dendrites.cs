@@ -20,5 +20,7 @@ namespace NeuralNetworks
         {
             return Previous.Output * weight;
         }
+
+        
     }
 }

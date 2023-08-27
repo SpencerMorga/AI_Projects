@@ -8,8 +8,6 @@ using Microsoft.Xna.Framework.Graphics;
 using NeuralNetIntro;
 using NeuralNetworks;
 
-
-
 namespace FlappyBird
 {
     internal class FlappyBirdGame

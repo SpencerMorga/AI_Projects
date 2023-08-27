@@ -49,5 +49,12 @@ namespace NeuralNetworks
             }
             return Outputs;
         }
+        public void ApplyUpdates()
+        {
+            for (int i = 0; i < Neurons.Length; i++)
+            {
+                Neurons[i].ApplyUpdates();
+            }
+        }
     }
 }

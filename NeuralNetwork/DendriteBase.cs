@@ -11,5 +11,11 @@ namespace NeuralNetworks
         public abstract double Compute();
         public double weight { get; set; }
 
+        public double WeightUpdate { get; set; }
+        public void ApplyUpdates()
+        {
+            weight += WeightUpdate;
+            WeightUpdate = 0;
+        }
     }
 }

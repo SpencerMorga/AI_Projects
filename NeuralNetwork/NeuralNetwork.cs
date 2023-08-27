@@ -72,6 +72,15 @@ namespace NeuralNetworks
             return outputs;
         }
 
+        public void ApplyUpdates()
+        {
+            for (int i = 0; i < layers.Length; i++)
+            {
+                layers[i].ApplyUpdates();
+            }
+        }
+
+        
         //public double GetError(double[] inputs, double[] desiredOutputs)
         //{
         //    double total = 0;
