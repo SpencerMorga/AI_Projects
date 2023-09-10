@@ -27,7 +27,7 @@ namespace NeuralNetworks
         {
             this.activationFunction = activationFunction;
             this.errorFunction = errorFunction;
-            
+           
             if (previousNeurons == null)
             {
                 dendrites = new DendriteBase[1];
@@ -72,13 +72,21 @@ namespace NeuralNetworks
             //output (first) layers, run the below line calcualtion. this will set initial delta with learningrate*-derivative to be modifided continuously
             //for all hidden layers, cycle this function with delta * act deriv * weight
             //check wiki for additional confirmation about process
-            Delta = learningRate * -(errorFunction.Derivative(activationFunction.Derivative(Compute()), Output) * activationFunction.Derivative(Compute()) * Input);
+
+            //Delta = learningRate * -(errorFunction.Derivative(activationFunction.Derivative(Compute()), Output) * activationFunction.Derivative(Compute()) * Input);
+
+            double temp = activationFunction.Derivative(Input) * Delta;
+            
             for (int i = 0; i < dendrites.Length; i++)
             {
-                dendrites[i].WeightUpdate += Delta;
-            }
-            biasUpdate += Delta;
+                //previous delta add sum temp * weight
+                ((Dendrites)dendrites[i]).Previous.Delta += temp * ((Dendrites)dendrites[i]).weight;
 
+                ((Dendrites)dendrites[i]).WeightUpdate -= learningRate * temp * ((Dendrites)dendrites[i]).Previous.Output;
+            }
+            biasUpdate -= temp * learningRate;
+
+            Delta = 0;
             //previous neuron delta set to weight * current delta...? access from dendrite
         }
 

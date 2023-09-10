@@ -30,42 +30,40 @@ namespace NeuralNetworks
             Func<double, double, double> mseDeriv = (actual, expected) => -2 * (expected - actual);
 
             ErrorFunction errorFunc = new ErrorFunction(mse, mseDeriv);
+
             ActivationFunction actFunc = new ActivationFunction(ActivationFunction.TanH, ActivationFunction.TanH_deriv);
+
             Random random = new Random();
-            (NeuralNetwork, int)[] nets = new (NeuralNetwork, int)[100];
 
-            for (int i = 0; i < 100; i++)
+            NeuralNetwork net = new NeuralNetwork(actFunc, errorFunc, new int[] { 2, 2, 1 });
+
+            //for (int i = 0; i < 1000; i++)
+            //{
+            //    Console.WriteLine(net.Compute(input, output, 0.125));
+            //}
+
+            while (true)
             {
-                nets[i].Item1 = (new NeuralNetwork(actFunc, new int[] { 2, 2, 1 }));
-                nets[i].Item1.Randomize(random, -5, 5);
-
-                nets[i].Item2 = (int)(nets[i].Item1.SumError(input, output, errorFunc) * 1000);
-            }
-
-            //nets[0].Item1.layers[1].Neurons[0].dendrites[0].weight = -1.849;
-            //nets[0].Item1.layers[1].Neurons[0].dendrites[1].weight = 1.366;
-            //nets[0].Item1.layers[1].Neurons[0].bias = -1.885;
-
-            //nets[0].Item1.layers[1].Neurons[1].dendrites[0].weight = -4.9488;
-            //nets[0].Item1.layers[1].Neurons[1].dendrites[1].weight = 2.47196;
-            //nets[0].Item1.layers[1].Neurons[1].bias = 3.9537;
-
-            //nets[0].Item1.layers[2].Neurons[0].dendrites[0].weight = 3.504;
-            //nets[0].Item1.layers[2].Neurons[0].dendrites[1].weight = -1.9808;
-            //nets[0].Item1.layers[2].Neurons[0].bias = 4.888;
-
-
-
-            GeneticLearning geneticLearning = new GeneticLearning(0.1, random);
-            while (nets[0].Item2 > 10)
-            {
-                for (int i = 0; i < 100; i++)
+                Console.SetCursorPosition(0, 0);
+                for (int i = 0; i < input.Length; i++)
                 {
-                    nets[i].Item2 = (int)(nets[i].Item1.SumError(input, output, errorFunc) * 1000);
+                    Console.Write("Inputs: ");
+                    for (int j = 0; j < input[i].Length; j++)
+                    {
+                        if (j != 0)
+                        {
+                            Console.Write(", ");
+                        }
+                        Console.Write(input[i][j]);
+                    }
+
+                    Console.Write(" Output: " + Math.Round(net.Compute(input[i])[0], 3));
+                    Console.WriteLine();
                 }
-                geneticLearning.Train(nets);
+                double error = net.Train(input, output, 0.002);
+                Console.WriteLine("Error: " + Math.Round(error, 3));
             }
-            ;
+            
         }
     }
 }

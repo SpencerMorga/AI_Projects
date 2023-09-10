@@ -15,17 +15,17 @@ namespace NeuralNetworks
         public Layer[] layers { get; set; }
         public ErrorFunction errorFunc { get; set; }
         public ActivationFunction activationFunc { get; set; }
-        public NeuralNetwork(ActivationFunction activation, /* ErrorFunction errorFunc, */
-        int[] neuronsPerLayer)
+        public int OutputCount => layers[layers.Length - 1].Neurons.Length;
+        public NeuralNetwork(ActivationFunction activation, ErrorFunction error, int[] neuronsPerLayer)
         {
             activationFunc = activation;
-           // this.errorFunc = errorFunc;
+            errorFunc = error;
             layers = new Layer[neuronsPerLayer.Length];
 
             for (int i = 0; i < neuronsPerLayer.Length; i++)
             {
-                if (i > 0) layers[i] = new Layer(activation, neuronsPerLayer[i], layers[i - 1]);
-                else layers[i] = new Layer(activation, neuronsPerLayer[i], null);
+                if (i > 0) layers[i] = new Layer(activationFunc, errorFunc, neuronsPerLayer[i], layers[i - 1]);
+                else layers[i] = new Layer(activationFunc, errorFunc, neuronsPerLayer[i], null);
 
             }
         }
@@ -74,24 +74,61 @@ namespace NeuralNetworks
 
         public void ApplyUpdates()
         {
-            for (int i = 0; i < layers.Length; i++)
+            for (int i = 1; i < layers.Length; i++)
             {
                 layers[i].ApplyUpdates();
             }
         }
 
-        
+        public void Backpropagation(double learningRate, double[] desiredOutputs)
+        {
+            Layer outputLayer = layers[layers.Length - 1];
+            for (int i = 0; i < outputLayer.Neurons.Length; i++)
+            {
+                outputLayer.Neurons[i].Delta += errorFunc.Derivative(outputLayer.Neurons[i].Output, desiredOutputs[i]);
+            }
+
+            for (int i = layers.Length - 1; i > 0; i--)
+            {
+                layers[i].Backpropagation(learningRate);
+            }
+        }
+
+        public double Train(double[][] inputs, double[][] desiredOutputs, double learningRate)
+        {
+            double total = 0;
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                total += GetError(inputs[i], desiredOutputs[i]);
+
+                Backpropagation(learningRate, desiredOutputs[i]);
+            }
+
+            ApplyUpdates();
+
+            return total / inputs.Length;
+        }
+
         //public double GetError(double[] inputs, double[] desiredOutputs)
         //{
         //    double total = 0;
-        //    for (int i = 0; i < inputs.Length; i++)
+        //    for (int i = 0; i < desiredOutputs.Length; i++)
         //    {
         //        total += errorFunc.Function(Compute(inputs)[i], desiredOutputs[i]);
         //    }
-        //     return total / inputs.Length;
-
+        //    return total / inputs.Length;
         //}
 
-
+        public double GetError(double[] inputs, double[] desiredOutputs)
+        {
+            if (desiredOutputs == null || desiredOutputs.Length != OutputCount) { throw new Exception("Desired outputs must be the same length as output count"); }
+            double[] outputs = Compute(inputs);
+            double error = 0;
+            for (int i = 0; i < outputs.Length; i++)
+            {
+                error += errorFunc.Function(outputs[i], desiredOutputs[i]);
+            }
+            return error;
+        }
     }
 }

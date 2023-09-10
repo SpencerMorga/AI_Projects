@@ -49,7 +49,7 @@ namespace FlappyBird
             nets = new NeuralNetwork[playersCount];
             for (int i = 0;i < playersCount; i++)
             {
-                nets[i] = new NeuralNetwork(activation, neuronsPerLayer);
+               // nets[i] = new NeuralNetwork(activation, neuronsPerLayer);
             }
 
             pipes = new List<Pipe>();
