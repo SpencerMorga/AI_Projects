@@ -36,7 +36,7 @@ namespace NeuralNetworks
             Random random = new Random();
 
             NeuralNetwork net = new NeuralNetwork(actFunc, errorFunc, new int[] { 2, 2, 1 });
-
+            net.Randomize(random, -1, 1);
             //for (int i = 0; i < 1000; i++)
             //{
             //    Console.WriteLine(net.Compute(input, output, 0.125));
@@ -60,7 +60,7 @@ namespace NeuralNetworks
                     Console.Write(" Output: " + Math.Round(net.Compute(input[i])[0], 3));
                     Console.WriteLine();
                 }
-                double error = net.Train(input, output, 0.002);
+                double error = net.Train(input, output, 0.002, 0.4);
                 Console.WriteLine("Error: " + Math.Round(error, 3));
             }
             

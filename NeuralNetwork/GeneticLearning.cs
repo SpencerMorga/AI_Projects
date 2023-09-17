@@ -55,7 +55,7 @@ namespace NeuralNetworks
                 {
                     Neurons winNeuron = winLayer.Neurons[j];
                     Neurons loseNeuron = loseLayer.Neurons[j];
-
+                    
                     for (int k = 0; k < winNeuron.dendrites.Length; k++)
                     {
                         loseNeuron.dendrites[k].weight = winNeuron.dendrites[k].weight;

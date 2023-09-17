@@ -72,11 +72,11 @@ namespace NeuralNetworks
             return outputs;
         }
 
-        public void ApplyUpdates()
+        public void ApplyUpdates(double momentum)
         {
             for (int i = 1; i < layers.Length; i++)
             {
-                layers[i].ApplyUpdates();
+                layers[i].ApplyUpdates(momentum);
             }
         }
 
@@ -94,7 +94,7 @@ namespace NeuralNetworks
             }
         }
 
-        public double Train(double[][] inputs, double[][] desiredOutputs, double learningRate)
+        public double Train(double[][] inputs, double[][] desiredOutputs, double learningRate, double momentum)
         {
             double total = 0;
             for (int i = 0; i < inputs.Length; i++)
@@ -104,7 +104,7 @@ namespace NeuralNetworks
                 Backpropagation(learningRate, desiredOutputs[i]);
             }
 
-            ApplyUpdates();
+            ApplyUpdates(momentum);
 
             return total / inputs.Length;
         }

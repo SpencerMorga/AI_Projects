@@ -19,7 +19,8 @@ namespace NeuralNetworks
         public double Input { get; set; }
         
         public double Delta { get; set; }
-        double biasUpdate;
+        double biasUpdate = 0;
+        double previousBiasUpdate = 0;
 
         public ActivationFunction activationFunction { get; set; }
         public ErrorFunction errorFunction { get; set; }
@@ -90,14 +91,16 @@ namespace NeuralNetworks
             //previous neuron delta set to weight * current delta...? access from dendrite
         }
 
-        public void ApplyUpdates()
+        public void ApplyUpdates(double momentum)
         {
+            biasUpdate += momentum * previousBiasUpdate;
             bias += biasUpdate;
+            previousBiasUpdate = biasUpdate;
             biasUpdate = 0;
 
             for (int i = 0; i < dendrites.Length; i++)
             {
-                dendrites[i].ApplyUpdates();
+                dendrites[i].ApplyUpdates(momentum);
             }
         }
     }
