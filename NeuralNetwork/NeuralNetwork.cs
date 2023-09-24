@@ -100,7 +100,25 @@ namespace NeuralNetworks
             for (int i = 0; i < inputs.Length; i++)
             {
                 total += GetError(inputs[i], desiredOutputs[i]);
+                Backpropagation(learningRate, desiredOutputs[i]);
+            }
 
+            ApplyUpdates(momentum);
+
+            return total / inputs.Length;
+        }
+
+        public double BatchTrain(double[][] inputs, double[][] desiredOutputs, int batchSize, double learningRate, double momentum)
+        {
+            double total = 0;
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                if (i % batchSize == 0 && i != 0)
+                {
+                    ApplyUpdates(momentum);
+                }
+
+                total += GetError(inputs[i], desiredOutputs[i]);
                 Backpropagation(learningRate, desiredOutputs[i]);
             }
 

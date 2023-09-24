@@ -60,7 +60,7 @@ namespace NeuralNetworks
                     Console.Write(" Output: " + Math.Round(net.Compute(input[i])[0], 3));
                     Console.WriteLine();
                 }
-                double error = net.Train(input, output, 0.002, 0.4);
+                double error = net.BatchTrain(input, output, 1, 0.002, 0.4);
                 Console.WriteLine("Error: " + Math.Round(error, 3));
             }
             
