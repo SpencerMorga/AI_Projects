@@ -8,24 +8,23 @@ namespace NeuralNetworks
     {
         static void Main(string[] args)
         {
-            double[][] input =
-             {
-               new double[] { 0, 0 },
-               new double[] { 0, 1 },
-               new double[] { 1, 0 },
-               new double[] { 1, 1 },
-            };
 
-            double[][] output =
-              {
-               new double[] { 0 },
-               new double[] { 1 },
-               new double[] { 1 },
-               new double[] { 0 },
-            };
+            double[][] input = new double[628][];
+
+            for (int i = 0; i < 628; i++)
+            {
+                input[i] = new double[] { i / 100.0 };
+            }
+
+            double[][] output = new double[628][];
+
+            for (int i = 0; i < 628; i++)
+            {
+                output[i] = new double[] { Math.Sin(i / 100.0) };
+            }
 
 
-            Func<double, double, double> mse = (actual, expected) => Math.Pow(expected - actual, 2);
+            Func<double, double, double> mse = (actual, expected) => Math.Pow(expected - actual, 2); 
 
             Func<double, double, double> mseDeriv = (actual, expected) => -2 * (expected - actual);
 
@@ -35,7 +34,7 @@ namespace NeuralNetworks
 
             Random random = new Random();
 
-            NeuralNetwork net = new NeuralNetwork(actFunc, errorFunc, new int[] { 2, 2, 1 });
+            NeuralNetwork net = new NeuralNetwork(actFunc, errorFunc, new int[] { 1, 2, 2, 1 });
             net.Randomize(random, -1, 1);
             //for (int i = 0; i < 1000; i++)
             //{
@@ -45,7 +44,7 @@ namespace NeuralNetworks
             while (true)
             {
                 Console.SetCursorPosition(0, 0);
-                for (int i = 0; i < input.Length; i++)
+                for (int i = 600; i < input.Length; i++)
                 {
                     Console.Write("Inputs: ");
                     for (int j = 0; j < input[i].Length; j++)
