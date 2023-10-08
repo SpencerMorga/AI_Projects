@@ -8,7 +8,6 @@ namespace NeuralNetworks
     {
         static void Main(string[] args)
         {
-
             double[][] input = new double[628][];
 
             for (int i = 0; i < 628; i++)
@@ -36,10 +35,6 @@ namespace NeuralNetworks
 
             NeuralNetwork net = new NeuralNetwork(actFunc, errorFunc, new int[] { 1, 2, 2, 1 });
             net.Randomize(random, -1, 1);
-            //for (int i = 0; i < 1000; i++)
-            //{
-            //    Console.WriteLine(net.Compute(input, output, 0.125));
-            //}
 
             while (true)
             {
