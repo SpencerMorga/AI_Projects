@@ -19,7 +19,7 @@ namespace NeuralNetworks
 
             for (int i = 0; i < 628; i++)
             {
-                output[i] = new double[] { Math.Sin(i / 100.0) };
+                output[i] = new double[] { Math.Sin(i / 100.0) * Math.Sin(Math.Sin(9 * i / 100)) };
             }
 
 

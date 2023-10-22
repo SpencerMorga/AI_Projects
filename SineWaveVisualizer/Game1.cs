@@ -25,7 +25,9 @@ namespace SineWaveVisualizer
         double[][] output = new double[628][];
 
         double error;
-
+        double batchSize = 10; //mine: 1 gmr: 1000 optimal: 10
+        double learningRate = 0.002; //mine = 0.002 gmr: 0.0005 optimal: 0.002
+        double momentum = 0.4; //mine = 0.4 gmr: 0.01 momentum: 0.4
         Random random = new Random();
 
         public Game1()
@@ -38,10 +40,10 @@ namespace SineWaveVisualizer
             _graphics.ApplyChanges();
         }
 
-        protected override void Initialize()
+        protected override void Initialize()//24446666
         {
             // TODO: Add your initialization logic here
-            net = new NeuralNetwork(new ActivationFunction(ActivationFunction.TanH, ActivationFunction.TanH_deriv), new ErrorFunction(mse, mseDeriv), new int[] { 1, 2, 2, 1 });
+            net = new NeuralNetwork(new ActivationFunction(ActivationFunction.TanH, ActivationFunction.TanH_deriv), new ErrorFunction(mse, mseDeriv), new int[] { 1, 2, 2, 1 }); //mine: 1, 2, 2, 1 gmr: 1, 5, 5, 5, 5, 1
             net.Randomize(random, -1, 1);
 
             for (int i = 0; i < 628; i++)
@@ -51,7 +53,7 @@ namespace SineWaveVisualizer
 
             for (int i = 0; i < 628; i++)
             {
-                output[i] = new double[] { Math.Sin(i / 100.0) };
+                output[i] = new double[] { 2 };//Math.Sin(i / 100.0)};
             }
             error = 0;
             base.Initialize();
@@ -69,7 +71,7 @@ namespace SineWaveVisualizer
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            error = net.BatchTrain(input, output, 1, 0.002, 0.4);
+            error = net.BatchTrain(input, output, (int)(batchSize), learningRate, momentum);
             for (int i = 0; i < 628; i++)
             {
                 y_position[i] = Math.Round(net.Compute(input[i])[0], 3);
@@ -87,7 +89,7 @@ namespace SineWaveVisualizer
 
             for (int i = 0; i < 628; i++)
             {
-                spriteBatch.DrawPoint(i, 314 + (int)(y_position[i] * 100), Color.Black, 1);
+                spriteBatch.DrawPoint(i, 314 + (int)(y_position[i] * -100), Color.Black, 2);
             }
             spriteBatch.DrawString(hakop, error.ToString(), new Vector2(0, 0), Color.Black);
 
