@@ -26,7 +26,7 @@ namespace SineWaveVisualizer
 
         double error;
         double batchSize = 10; //mine: 1 gmr: 1000 optimal: 10
-        double learningRate = 0.002; //mine = 0.002 gmr: 0.0005 optimal: 0.002
+        double learningRate = 0.001; //mine = 0.002 gmr: 0.0005 optimal: 0.002
         double momentum = 0.4; //mine = 0.4 gmr: 0.01 momentum: 0.4
         Random random = new Random();
 
@@ -53,7 +53,7 @@ namespace SineWaveVisualizer
 
             for (int i = 0; i < 628; i++)
             {
-                output[i] = new double[] { 2 };//Math.Sin(i / 100.0)};
+                output[i] = new double[] { Math.Sin(i / 100.0) };
             }
             error = 0;
             base.Initialize();

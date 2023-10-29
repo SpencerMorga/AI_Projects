@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeuralNetwork", "NeuralNetw
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlappyBird", "FlappyBird\FlappyBird.csproj", "{31A72B76-A5A5-427E-AD1D-011CD6542A9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SineWaveVisualizer", "SineWaveVisualizer\SineWaveVisualizer.csproj", "{50C7FBBC-F640-4F09-AE44-D0C1A6AE046D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SineWaveVisualizer", "SineWaveVisualizer\SineWaveVisualizer.csproj", "{50C7FBBC-F640-4F09-AE44-D0C1A6AE046D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniMaxTrees", "MiniMaxTrees\MiniMaxTrees.csproj", "{C8027FD0-81F1-4AF3-A781-CE7EC1E1D794}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{50C7FBBC-F640-4F09-AE44-D0C1A6AE046D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50C7FBBC-F640-4F09-AE44-D0C1A6AE046D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50C7FBBC-F640-4F09-AE44-D0C1A6AE046D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8027FD0-81F1-4AF3-A781-CE7EC1E1D794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8027FD0-81F1-4AF3-A781-CE7EC1E1D794}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8027FD0-81F1-4AF3-A781-CE7EC1E1D794}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8027FD0-81F1-4AF3-A781-CE7EC1E1D794}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
