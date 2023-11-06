@@ -17,6 +17,7 @@ namespace MiniMaxTrees
 
         Node<T>[] GetChildren();
 
+        GameState MyState { get; }
 
     }
 

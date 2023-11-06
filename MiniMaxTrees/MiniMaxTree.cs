@@ -8,12 +8,10 @@ namespace MiniMaxTrees
     {
         public Node<TGameState>[] Children;
         public Node<TGameState> Parent;
-        IGameState<TGameState> gameState;
-        int value;
+        public IGameState<TGameState> gameState;
         
-        public Node(int Value, IGameState<TGameState> GameState)
+        public Node(IGameState<TGameState> GameState)
         {
-            value = Value;
             gameState = GameState;
         }
     }
@@ -25,7 +23,5 @@ namespace MiniMaxTrees
         {
             root = Root;
         }
-
-        public void Add()
     }
 }
