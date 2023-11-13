@@ -37,24 +37,12 @@ namespace MiniMaxTrees
 
         public int[] ValidKnightMoves(int position, Pieces piece)
         {
-            if (position - 2 < 0) //if cannot move behind
-            {
-                if (board[position+2] == 0 && GetColor((byte)board[position+2], 3) == GetColor((byte)piece, 3)) //if forward space is taken and is same color
-                {
-                    return new int[] { 0 };
-                }
-            }
-            else
-            {
-                if (board[position-2] == 0)
-                {
-                    if (board[position + 2] == 0)
-                    {
-                        return new int[] { 0 };
-                    }
-                }
-            }
-        }
+            int forwards = position + 2;
+            int backwards = position - 2;
+            return board[forwards] > 0 ? GetColor((byte)piece, 3) == GetColor((byte)board[forwards], 3) ?  :
+        } // array of places you can, 
+
+        
 
         private bool GetColor(byte byteToConvert, int bitToReturn)
         {
