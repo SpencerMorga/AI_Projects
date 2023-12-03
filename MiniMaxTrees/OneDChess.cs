@@ -3,24 +3,34 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Diagnostics.SymbolStore;
 using System.Text;
-using static MiniMaxTrees.IGameState<MiniMaxTrees.OneDChess>;
+using static MiniMaxTrees.OneDChess;
 
 namespace MiniMaxTrees
 {
-    public class OneDChess : IGameState<OneDChess> 
+    public class OneDChess
     {
         // FORWARD IS DEFINED AS THE NEGATIVE Y DIRECTION ON THE BOARD, WITH THE ONE SQUARE AT THE TOP AND THE EIGHT SQUARE AT THE BOTTOM
         Pieces[] board = new Pieces[8];
         GameState current = new GameState();
         List<KeyValuePair<Pieces, int>> moves = new List<KeyValuePair<Pieces, int>>();
+
+        [Flags]
+        enum GameState
+        {
+            Terminal = 4,
+            Win = 0,
+            Tie = 1,
+            Loss = 2
+        }
+
         public enum Pieces : byte
-        { 
+        {
             Knight = 1,
             Rook = 2,
             King = 3,
             IsWhite = 4
         }
-
+        
         GameState MyState
         {
             get
@@ -32,10 +42,18 @@ namespace MiniMaxTrees
         public Node<OneDChess>[] GetChildren()
         {
             //gets all possible moves as their own positions
-            for (int i = 0; i < board.Length; i++)
+            Node<OneDChess>[] children = new Node<OneDChess>[moves.Count];
+
+            for (int i = 0; i < moves.Count; i++)
             {
                 
+                children[i] = new Node<OneDChess>();
             }
+        }
+
+        public void Move()
+        {
+
         }
 
         public void GetValidKnightMoves(int currentPosition, Pieces piece)

@@ -4,15 +4,16 @@ using System.Text;
 
 namespace MiniMaxTrees
 {
-    public class Node<TGameState> where TGameState : IGameState<TGameState>
+    public class Node<OneDChess>
     {
-        public Node<TGameState>[] Children;
-        public Node<TGameState> Parent;
-        public IGameState<TGameState> gameState;
+        public Node<OneDChess>[] Children;
+        public Node<OneDChess> Parent;
+        public OneDChess chess;
         
-        public Node(IGameState<TGameState> GameState)
+        
+        public Node(OneDChess Chess)
         {
-            gameState = GameState;
+            chess = Chess;
         }
     }
     public class MiniMaxTree<TGameState> where TGameState : IGameState<TGameState>
