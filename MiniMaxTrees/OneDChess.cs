@@ -12,7 +12,7 @@ namespace MiniMaxTrees
         // FORWARD IS DEFINED AS THE NEGATIVE Y DIRECTION ON THE BOARD, WITH THE ONE SQUARE AT THE TOP AND THE EIGHT SQUARE AT THE BOTTOM
         Pieces[] board = new Pieces[8];
         GameState current = new GameState();
-        List<KeyValuePair<Pieces, int>> moves = new List<KeyValuePair<Pieces, int>>();
+        List<KeyValuePair<Pieces, (int, int)>> moves = new List<KeyValuePair<Pieces, (int, int)>>();
 
         [Flags]
         enum GameState
@@ -35,8 +35,13 @@ namespace MiniMaxTrees
         {
             get
             {
-                if (current =)
+                if (current = )
             } 
+        }
+
+        public OneDChess(Pieces[] Board)
+        {
+            board = Board;
         }
 
         public Node<OneDChess>[] GetChildren()
@@ -46,42 +51,49 @@ namespace MiniMaxTrees
 
             for (int i = 0; i < moves.Count; i++)
             {
-                
-                children[i] = new Node<OneDChess>();
+                Pieces[] newBoard = board;
+                Move(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
+                children[i] = new Node<OneDChess>(new OneDChess(newBoard));
             }
+
+            return children;
         }
 
-        public void Move()
+        public void Move(Pieces[] board, int currentPosition, int newPosition) 
         {
-
+            if (IsMoveValid(newPosition, board[currentPosition]))
+            {
+                board[newPosition] = board[currentPosition];
+                board[currentPosition] = 0;
+            }
         }
 
         public void GetValidKnightMoves(int currentPosition, Pieces piece)
         {
-            if (IsMoveValid(currentPosition + 2, piece)) moves.Add(new KeyValuePair<Pieces, int>(piece, currentPosition + 2));
-            if (IsMoveValid(currentPosition - 2, piece)) moves.Add(new KeyValuePair<Pieces, int>(piece, currentPosition - 2));
+            if (IsMoveValid(currentPosition + 2, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, currentPosition + 2)));
+            if (IsMoveValid(currentPosition - 2, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, currentPosition - 2)));
         }
 
         public void GetValidKingMoves(int currentPosition, Pieces piece) 
         {
-            if (IsMoveValid(currentPosition + 1, piece)) moves.Add(new KeyValuePair<Pieces, int>(piece, currentPosition + 2));
-            if (IsMoveValid(currentPosition - 1, piece)) moves.Add(new KeyValuePair<Pieces, int>(piece, currentPosition - 2));
+            if (IsMoveValid(currentPosition + 1, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, currentPosition + 1)));
+            if (IsMoveValid(currentPosition - 1, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, currentPosition - 1)));
         }
 
         public void ValidRookMoves(int currentPosition, Pieces piece)
         { 
-            int i = currentPosition;
+            int i = currentPosition+1;
             while (board[i] > 0)
             {
-                if(IsMoveValid(i, piece)) moves.Add(new KeyValuePair<Pieces, int>(piece, i));
+                if(IsMoveValid(i, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, i)));
                 i++;
             }
 
-            int j = currentPosition;
+            int j = currentPosition-1;
             while (board[j] > 0)
             {
-                if (IsMoveValid(j, piece)) moves.Add(new KeyValuePair<Pieces, int>(piece, j));
-                j++;
+                if (IsMoveValid(j, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, j)));
+                j--;
             }
         }
 
@@ -95,7 +107,5 @@ namespace MiniMaxTrees
             int mask = 1 << bitToReturn;
             return (byteToConvert & mask) == mask;
         }
-
-
     }
 }
