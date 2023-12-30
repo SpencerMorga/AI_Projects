@@ -10,6 +10,7 @@ namespace MiniMaxTrees
     public class OneDChess
     {
         // FORWARD IS DEFINED AS THE NEGATIVE Y DIRECTION ON THE BOARD, WITH THE ONE SQUARE AT THE TOP AND THE EIGHT SQUARE AT THE BOTTOM
+
         Pieces[] board = new Pieces[8];
         GameState current = new GameState();
         List<KeyValuePair<Pieces, (int, int)>> moves = new List<KeyValuePair<Pieces, (int, int)>>();
@@ -23,6 +24,7 @@ namespace MiniMaxTrees
             Loss = 2
         }
 
+        [Flags]
         public enum Pieces : byte
         {
             Knight = 1,
@@ -46,6 +48,13 @@ namespace MiniMaxTrees
 
         public Node<OneDChess>[] GetChildren()
         {
+            //code to determine if terminal state
+            // - determine if check
+            // - if king's position a possible move of the rook
+            // - AND no other move can possibly block the king or take the rook
+
+            //and then make sure that moves aren't illegal and don't endager the king (HOW??????)
+
             //gets all possible moves as their own positions
             Node<OneDChess>[] children = new Node<OneDChess>[moves.Count];
 
@@ -61,7 +70,7 @@ namespace MiniMaxTrees
 
         public void Move(Pieces[] board, int currentPosition, int newPosition) 
         {
-            if (IsMoveValid(newPosition, board[currentPosition]))
+            if (IsMoveValid(newPosition, board[currentPosition]) && !IsMoveACheck(newPosition, board[currentPosition]))
             {
                 board[newPosition] = board[currentPosition];
                 board[currentPosition] = 0;
@@ -100,6 +109,11 @@ namespace MiniMaxTrees
         public bool IsMoveValid(int positionToMoveTo, Pieces piece)
         {
             return board[positionToMoveTo] == 0 || ((board[positionToMoveTo] > 0) && GetColor((byte)piece, 3) != GetColor((byte)board[positionToMoveTo], 3));
+        }
+
+        public bool IsMoveACheck(int positionToMoveTo, Pieces piece) //AS IS THE MOVE IS TAKING THE KING
+        {
+            return board[positionToMoveTo].HasFlag(Pieces.King);
         }
 
         private bool GetColor(byte byteToConvert, int bitToReturn)
