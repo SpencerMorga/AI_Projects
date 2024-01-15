@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace FlappyBird
 {
-    internal class Pipe
-    { 
-        public Texture2D image;
-        public Texture2D imageR;
-        public Vector2 position;
-        public Color color;
-        public Vector2 Scale;
-        public Rectangle? sourceRectangle;
-       
+    internal class Pipe : Sprite
+    {
+        Texture2D imageR;
+        int bStart = 0;
+
+        public Pipe(Texture2D image, Vector2 position, Color color, Texture2D ImageR)
+            : base(image, position, color)
+        {
+            imageR = ImageR;
+        }
+
         public Rectangle hitbox
         {
             get
@@ -44,32 +47,32 @@ namespace FlappyBird
             }
         }
 
-        public Pipe(Texture2D image, Texture2D imageR, Vector2 position, Color color)
-        {
-            this.image = image;
-            this.imageR = imageR;
-            this.position = position;
-            this.color = color;
-            Scale = Vector2.One;
-
-        }   
-         
-        
-         
         public void Update(GameTime gameTime)
         {
-            position.X -= 6;
+            position.X -= 5;
         }
         
-        public void Draw(SpriteBatch sb)
+        public override void Draw(SpriteBatch sb)
         {
-            sb.Draw(imageR, position, null, color, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
+            sb.Draw(imageR, position, sourceRectangle, color, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
 
-            int uprightStart = imageR.Height - (int)Math.Abs(position.Y) + 120;
+            bStart = imageR.Height - (int)Math.Abs(position.Y) + 120;
             
-            sb.Draw(image, new Vector2(position.X, uprightStart), null, color, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
+            sb.Draw(image, new Vector2(position.X, bStart), sourceRectangle, color, 0, Vector2.Zero, Scale, SpriteEffects.None, 0);
+        }
+
+        public (double, double) getGapCenter()
+        {
+            // tpipe_y + tpipe_height + ((bpipe_y - (tpipe_y + tpipe_height)) / 2)
+            // tpipe_x + (tpipe_width / 2)
+            return (position.X + (image.Width / 2.0), position.Y + image.Height + ((bStart - (position.Y + image.Height)) / 2.0));
         }
 
     }
 
+    /*
+     * 
+     * generate reverse pipe from (screen width, [0 to -50])
+     * length of image - abs(y) + gap space = start of upright pipe
+     */
 }

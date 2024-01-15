@@ -18,19 +18,19 @@ namespace MiniMaxTrees
         [Flags]
         enum GameState
         {
-            Terminal = 4,
+            Terminal = 0B100,
             Win = 0,
             Tie = 1,
-            Loss = 2
+            Loss = 0B10
         }
 
         [Flags]
         public enum Pieces : byte
         {
-            Knight = 1,
-            Rook = 2,
-            King = 3,
-            IsWhite = 4
+            Knight = 0B1,
+            Rook = 0B10,
+            King = 0B100,
+            IsWhite = 0B1000
         }
         
         GameState MyState
@@ -52,26 +52,67 @@ namespace MiniMaxTrees
             // - determine if check
             // - if king's position a possible move of the rook
             // - AND no other move can possibly block the king or take the rook
+            // - to do this....
+                // MAKE ISINCHECK FUNCTION?
+                // if isincheck
+                // run through all possible moves
+                // if the execution of any of those moves results in !isincheck, MAKE MOVE NO CHECKMATE LOL
 
             //and then make sure that moves aren't illegal and don't endager the king (HOW??????)
+            //- to do this...
+                // MAKE ISINCHECK FUNCTION
+                // constantly check isincheck on own king when making moves
+                // if !isincheck DO NOT MAKE MOVE LOL
 
             //gets all possible moves as their own positions
             Node<OneDChess>[] children = new Node<OneDChess>[moves.Count];
 
             for (int i = 0; i < moves.Count; i++)
             {
-                Pieces[] newBoard = board;
+                Pieces[] newBoard = new Pieces[board.Length];
+                CopyArray(board, newBoard);
+
                 Move(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
+
+                if (IsMoveACheck(moves[i].Value.Item2, moves[i].Key) && IsInCheck(newBoard[moves[i].Value.Item2]))
+                {
+                    for (int j = 0; j < moves.Count; j++)
+                    {
+                        if (moves[j].Key.HasFlag(Pieces.IsWhite) == board[moves[j].Value.Item2].HasFlag(Pieces.IsWhite))
+                        {
+                            Pieces[] testBoard = new Pieces[newBoard.Length];
+                            CopyArray(newBoard, testBoard);
+
+                            Move(testBoard, moves[j].Value.Item1, moves[j].Value.Item2); //MIGHT NEED TO CHANGE BOARD PARAMETER?
+                            if (!IsInCheck(testBoard[moves[i].Value.Item2]))
+                            {
+                                //no checkmate
+                            }
+                        }
+                    }
+                    // yes checkmate
+                }
+
                 children[i] = new Node<OneDChess>(new OneDChess(newBoard));
             }
 
             return children;
         }
 
+        public void CopyArray(Pieces[] A, Pieces[] B)
+        {
+            for (int i = 0; i < A.Length; i++)
+            {
+                B[i] = A[i];
+            }
+        }
+
         public void Move(Pieces[] board, int currentPosition, int newPosition) 
         {
             if (IsMoveValid(newPosition, board[currentPosition]) && !IsMoveACheck(newPosition, board[currentPosition]))
             {
+                // DO NOT MAKE OWN KING DIE
+
                 board[newPosition] = board[currentPosition];
                 board[currentPosition] = 0;
             }
@@ -113,7 +154,22 @@ namespace MiniMaxTrees
 
         public bool IsMoveACheck(int positionToMoveTo, Pieces piece) //AS IS THE MOVE IS TAKING THE KING
         {
-            return board[positionToMoveTo].HasFlag(Pieces.King);
+            return board[positionToMoveTo].HasFlag(Pieces.King) && IsMoveValid(positionToMoveTo, piece);
+        }
+
+        public bool IsInCheck(Pieces piece) //MUST TAKE INTO KING
+        {
+            for (int i = 0; i < moves.Count; i++)
+            {
+                if (moves[i].Key.HasFlag(Pieces.IsWhite) == piece.HasFlag(Pieces.IsWhite))
+                {
+                    if (IsMoveACheck(moves[i].Value.Item2, moves[i].Key))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private bool GetColor(byte byteToConvert, int bitToReturn)
