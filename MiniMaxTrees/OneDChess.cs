@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Diagnostics.SymbolStore;
 using System.Text;
@@ -14,6 +15,7 @@ namespace MiniMaxTrees
         Pieces[] board = new Pieces[8];
         GameState current = new GameState();
         List<KeyValuePair<Pieces, (int, int)>> moves = new List<KeyValuePair<Pieces, (int, int)>>();
+        bool breakAll = false;
 
         [Flags]
         enum GameState
@@ -62,9 +64,10 @@ namespace MiniMaxTrees
             //- to do this...
                 // MAKE ISINCHECK FUNCTION
                 // constantly check isincheck on own king when making moves
-                // if !isincheck DO NOT MAKE MOVE LOL
+                // if isincheck DO NOT MAKE MOVE LOL
 
             //gets all possible moves as their own positions
+
             Node<OneDChess>[] children = new Node<OneDChess>[moves.Count];
 
             for (int i = 0; i < moves.Count; i++)
@@ -72,30 +75,50 @@ namespace MiniMaxTrees
                 Pieces[] newBoard = new Pieces[board.Length];
                 CopyArray(board, newBoard);
 
+                Pieces[] testBoard = new Pieces[newBoard.Length]; //initialize testBoard
+                CopyArray(newBoard, newBoard);
+
+                for (int j = 0; j < 8; j++) //locate position of king
+                {
+                    if (newBoard[j].HasFlag(Pieces.King) && (newBoard[j].HasFlag(Pieces.IsWhite)) == (moves[i].Key.HasFlag(Pieces.IsWhite))) //is the piece same color king?
+                    {
+                        Move(testBoard, moves[i].Value.Item1, moves[i].Value.Item2);
+
+                        if (IsInCheck(testBoard[j]))
+                        {
+                            CopyArray(newBoard, testBoard); // reset testBoard
+                            breakAll = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (breakAll) //if move will endanger king, do not make move 
+                {
+                    breakAll = false;
+                    continue;
+                }
+                
                 Move(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
 
-                if (IsMoveACheck(moves[i].Value.Item2, moves[i].Key) && IsInCheck(newBoard[moves[i].Value.Item2]))
+                if (IsMoveACheck(moves[i].Value.Item2, moves[i].Key) && IsInCheck(newBoard[moves[i].Value.Item2])) // determines if checkmate
                 {
                     for (int j = 0; j < moves.Count; j++)
                     {
-                        if (moves[j].Key.HasFlag(Pieces.IsWhite) == board[moves[j].Value.Item2].HasFlag(Pieces.IsWhite))
+                        if (moves[j].Key.HasFlag(Pieces.IsWhite) == board[moves[j].Value.Item2].HasFlag(Pieces.IsWhite)) // IF PIECE MOVING HAS SAME COLOR AS ATTACKED KING
                         {
-                            Pieces[] testBoard = new Pieces[newBoard.Length];
-                            CopyArray(newBoard, testBoard);
-
-                            Move(testBoard, moves[j].Value.Item1, moves[j].Value.Item2); //MIGHT NEED TO CHANGE BOARD PARAMETER?
+                            Move(testBoard, moves[j].Value.Item1, moves[j].Value.Item2); // IF CAN DO ANY MOVE THAT RESULTS IN NOT CHECKMATE MAKE MOVE AND NO CHECKMATE
                             if (!IsInCheck(testBoard[moves[i].Value.Item2]))
                             {
                                 //no checkmate
+                                CopyArray(testBoard, newBoard); // make newBoard have the move that makes uncheckmate
                             }
                         }
                     }
-                    // yes checkmate
+                    //yes checkmate
                 }
-
                 children[i] = new Node<OneDChess>(new OneDChess(newBoard));
             }
-
             return children;
         }
 
@@ -111,8 +134,6 @@ namespace MiniMaxTrees
         {
             if (IsMoveValid(newPosition, board[currentPosition]) && !IsMoveACheck(newPosition, board[currentPosition]))
             {
-                // DO NOT MAKE OWN KING DIE
-
                 board[newPosition] = board[currentPosition];
                 board[currentPosition] = 0;
             }
