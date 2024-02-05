@@ -50,24 +50,6 @@ namespace MiniMaxTrees
 
         public Node<OneDChess>[] GetChildren()
         {
-            //code to determine if terminal state
-            // - determine if check
-            // - if king's position a possible move of the rook
-            // - AND no other move can possibly block the king or take the rook
-            // - to do this....
-                // MAKE ISINCHECK FUNCTION?
-                // if isincheck
-                // run through all possible moves
-                // if the execution of any of those moves results in !isincheck, MAKE MOVE NO CHECKMATE LOL
-
-            //and then make sure that moves aren't illegal and don't endager the king (HOW??????)
-            //- to do this...
-                // MAKE ISINCHECK FUNCTION
-                // constantly check isincheck on own king when making moves
-                // if isincheck DO NOT MAKE MOVE LOL
-
-            //gets all possible moves as their own positions
-
             Node<OneDChess>[] children = new Node<OneDChess>[moves.Count];
 
             for (int i = 0; i < moves.Count; i++)
@@ -101,6 +83,7 @@ namespace MiniMaxTrees
                 
                 Move(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
 
+                ///THIS LOGIC WILL MOVE TO ONE OF THE IS___ FUNCTIONS. KEEP FOR NOW FOR THE "ANY MOVE RESULTING IN NOT CHECKMATE" LOGIC 
                 if (IsMoveACheck(moves[i].Value.Item2, moves[i].Key) && IsInCheck(newBoard[moves[i].Value.Item2])) // determines if checkmate
                 {
                     for (int j = 0; j < moves.Count; j++)
@@ -117,10 +100,28 @@ namespace MiniMaxTrees
                     }
                     //yes checkmate
                 }
+
                 children[i] = new Node<OneDChess>(new OneDChess(newBoard));
             }
             return children;
         }
+
+        public bool IsWin()
+        {
+            // find king, if is in check, 
+        }
+
+        public bool IsLoss()
+        {
+
+        }
+
+        public bool IsTie()
+        {
+
+        }
+
+
 
         public void CopyArray(Pieces[] A, Pieces[] B)
         {
