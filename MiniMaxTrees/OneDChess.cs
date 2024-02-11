@@ -14,6 +14,7 @@ namespace MiniMaxTrees
 
         Pieces[] board = new Pieces[8];
         GameState current = new GameState();
+        bool Turn = true; //true is white, false is black
         List<KeyValuePair<Pieces, (int, int)>> moves = new List<KeyValuePair<Pieces, (int, int)>>();
         bool breakAll = false;
 
@@ -39,7 +40,7 @@ namespace MiniMaxTrees
         {
             get
             {
-                if (current = )
+                if (current = ) //call IsWin/Loss/Draw and set currentstate accordingly
             } 
         }
 
@@ -58,7 +59,7 @@ namespace MiniMaxTrees
                 CopyArray(board, newBoard);
 
                 Pieces[] testBoard = new Pieces[newBoard.Length]; //initialize testBoard
-                CopyArray(newBoard, newBoard);
+                CopyArray(newBoard, testBoard);
 
                 for (int j = 0; j < 8; j++) //locate position of king
                 {
@@ -108,19 +109,61 @@ namespace MiniMaxTrees
 
         public bool IsWin()
         {
-            // find king, if is in check, 
+            for (int i = 0; i < board.Length; i++)
+            {
+                if (board[i].HasFlag(Pieces.King) && (board[i].HasFlag(Pieces.IsWhite) != Turn)) //find OPP king
+                {
+                    if (IsInCheck(board[i]) && !CanBlockCheckmate(i))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         public bool IsLoss()
         {
-
+                
+            for (int Éôö = 0; Éôö < board.Length; Éôö++)
+            {
+                if (board[Éôö].HasFlag(Pieces.King) && (board[Éôö].HasFlag(Pieces.IsWhite)) == Turn) //find sameq king♫
+                {
+                    if (IsInCheck(board[Éôö]) && !CanBlockCheckmate(Éôö))
+                    {
+                        return true;
+                    }
+                }
+            }
         }
 
-        public bool IsTie()
+        public bool IsDraw()
         {
 
         }
 
+        public bool CanBlockCheckmate(int kingPosition)
+        {
+            Pieces[] testBoard = new Pieces[board.Length]; //initialize testBoard
+            CopyArray(board, testBoard);
+
+            for (int j = 0; j < moves.Count; j++)
+            {
+                if (moves[j].Key.HasFlag(Pieces.IsWhite) == board[moves[j].Value.Item2].HasFlag(Pieces.IsWhite)) // IF PIECE MOVING HAS SAME COLOR AS ATTACKED KING
+                {
+                    CopyArray(board, testBoard); //reset testBoard
+
+                    Move(testBoard, moves[j].Value.Item1, moves[j].Value.Item2); //make move
+                    if (!IsInCheck(testBoard[kingPosition])) //if ischeckmate results in false, the move stays and no checkmate is made
+                    {
+                        //no checkmate
+                        return false;
+                        // CopyArray(testBoard, board); // make board have the move that makes uncheckmate
+                    }
+                }
+            }
+            return true;
+        }
 
 
         public void CopyArray(Pieces[] A, Pieces[] B)
