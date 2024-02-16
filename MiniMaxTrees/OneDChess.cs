@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Diagnostics.SymbolStore;
+using System.Runtime.InteropServices;
 using System.Text;
 using static MiniMaxTrees.OneDChess;
+
+using PieceMove =  System.Collections.Generic.KeyValuePair<MiniMaxTrees.OneDChess.Pieces, (int, int)>;
 
 namespace MiniMaxTrees
 {
@@ -15,7 +18,7 @@ namespace MiniMaxTrees
         Pieces[] board = new Pieces[8];
         GameState current = new GameState();
         bool Turn = true; //true is white, false is black
-        List<KeyValuePair<Pieces, (int, int)>> moves = new List<KeyValuePair<Pieces, (int, int)>>();
+        List<PieceMove> moves = new List<PieceMove>();
         bool breakAll = false;
 
         [Flags]
@@ -51,60 +54,71 @@ namespace MiniMaxTrees
 
         public Node<OneDChess>[] GetChildren()
         {
+            FillMoves(); //fills moves with appropriate color based on turn
+
             Node<OneDChess>[] children = new Node<OneDChess>[moves.Count];
 
             for (int i = 0; i < moves.Count; i++)
             {
-                Pieces[] newBoard = new Pieces[board.Length];
+                Pieces[] newBoard = new Pieces[board.Length]; //initialize newBoard
                 CopyArray(board, newBoard);
 
                 Pieces[] testBoard = new Pieces[newBoard.Length]; //initialize testBoard
                 CopyArray(newBoard, testBoard);
 
-                for (int j = 0; j < 8; j++) //locate position of king
+                if (DoesMoveEndangerKing(ref newBoard, ref testBoard, moves[i])) //if move will endanger king, do not make move 
                 {
-                    if (newBoard[j].HasFlag(Pieces.King) && (newBoard[j].HasFlag(Pieces.IsWhite)) == (moves[i].Key.HasFlag(Pieces.IsWhite))) //is the piece same color king?
-                    {
-                        Move(testBoard, moves[i].Value.Item1, moves[i].Value.Item2);
-
-                        if (IsInCheck(testBoard[j]))
-                        {
-                            CopyArray(newBoard, testBoard); // reset testBoard
-                            breakAll = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (breakAll) //if move will endanger king, do not make move 
-                {
-                    breakAll = false;
                     continue;
                 }
                 
                 Move(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
 
-                ///THIS LOGIC WILL MOVE TO ONE OF THE IS___ FUNCTIONS. KEEP FOR NOW FOR THE "ANY MOVE RESULTING IN NOT CHECKMATE" LOGIC 
-                if (IsMoveACheck(moves[i].Value.Item2, moves[i].Key) && IsInCheck(newBoard[moves[i].Value.Item2])) // determines if checkmate
-                {
-                    for (int j = 0; j < moves.Count; j++)
-                    {
-                        if (moves[j].Key.HasFlag(Pieces.IsWhite) == board[moves[j].Value.Item2].HasFlag(Pieces.IsWhite)) // IF PIECE MOVING HAS SAME COLOR AS ATTACKED KING
-                        {
-                            Move(testBoard, moves[j].Value.Item1, moves[j].Value.Item2); // IF CAN DO ANY MOVE THAT RESULTS IN NOT CHECKMATE MAKE MOVE AND NO CHECKMATE
-                            if (!IsInCheck(testBoard[moves[i].Value.Item2]))
-                            {
-                                //no checkmate
-                                CopyArray(testBoard, newBoard); // make newBoard have the move that makes uncheckmate
-                            }
-                        }
-                    }
-                    //yes checkmate
-                }
-
                 children[i] = new Node<OneDChess>(new OneDChess(newBoard));
             }
             return children;
+        }
+
+        public void FillMoves()
+        {
+            for (int i = 0; i < board.Length; i++) // Fill Moves
+            {
+                if (Turn)
+                {
+                    if (board[i].HasFlag(Pieces.IsWhite))
+                    {
+                        if (board[i].HasFlag(Pieces.King))
+                        {
+                            GetValidKingMoves(i, board[i]);
+                        }
+                        if (board[i].HasFlag(Pieces.Knight))
+                        {
+                            GetValidKnightMoves(i, board[i]);
+                        }
+                        if (board[i].HasFlag(Pieces.Rook))
+                        {
+                            ValidRookMoves(i, board[i]);
+                        }
+                    }
+                }
+                else
+                {
+                    if (!board[i].HasFlag(Pieces.IsWhite))
+                    {
+                        if (board[i].HasFlag(Pieces.King))
+                        {
+                            GetValidKingMoves(i, board[i]);
+                        }
+                        if (board[i].HasFlag(Pieces.Knight))
+                        {
+                            GetValidKnightMoves(i, board[i]);
+                        }
+                        if (board[i].HasFlag(Pieces.Rook))
+                        {
+                            ValidRookMoves(i, board[i]);
+                        }
+                    }
+                }
+            }
         }
 
         public bool IsWin()
@@ -124,22 +138,44 @@ namespace MiniMaxTrees
 
         public bool IsLoss()
         {
-                
-            for (int Éôö = 0; Éôö < board.Length; Éôö++)
+            for (int i = 0; i < board.Length; i++)
             {
-                if (board[Éôö].HasFlag(Pieces.King) && (board[Éôö].HasFlag(Pieces.IsWhite)) == Turn) //find sameq king♫
+                if (board[i].HasFlag(Pieces.King) && (board[i].HasFlag(Pieces.IsWhite)) == Turn) //find same color king♫
                 {
-                    if (IsInCheck(board[Éôö]) && !CanBlockCheckmate(Éôö))
+                    if (IsInCheck(board[i]) && !CanBlockCheckmate(i))
                     {
                         return true;
                     }
                 }
             }
+            return false;
         }
 
         public bool IsDraw()
         {
+            if (moves.Count == 0)
+            {
+                return true;
+            }
+            return false;
+        }
 
+        public bool DoesMoveEndangerKing(ref Pieces[] newBoard, ref Pieces[] testBoard, PieceMove move)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                if (newBoard[j].HasFlag(Pieces.King) && (newBoard[j].HasFlag(Pieces.IsWhite)) == (moves[i].Key.HasFlag(Pieces.IsWhite))) //is the piece same color king?
+                {
+                    Move(testBoard, move.Value.Item1, move.Value.Item2);
+
+                    if (IsInCheck(testBoard[j]))
+                    {
+                        CopyArray(newBoard, testBoard); // reset testBoard
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         public bool CanBlockCheckmate(int kingPosition)
@@ -185,14 +221,14 @@ namespace MiniMaxTrees
 
         public void GetValidKnightMoves(int currentPosition, Pieces piece)
         {
-            if (IsMoveValid(currentPosition + 2, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, currentPosition + 2)));
-            if (IsMoveValid(currentPosition - 2, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, currentPosition - 2)));
+            if (IsMoveValid(currentPosition + 2, piece)) moves.Add(new PieceMove(piece, (currentPosition, currentPosition + 2)));
+            if (IsMoveValid(currentPosition - 2, piece)) moves.Add(new PieceMove(piece, (currentPosition, currentPosition - 2)));
         }
 
         public void GetValidKingMoves(int currentPosition, Pieces piece) 
         {
-            if (IsMoveValid(currentPosition + 1, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, currentPosition + 1)));
-            if (IsMoveValid(currentPosition - 1, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, currentPosition - 1)));
+            if (IsMoveValid(currentPosition + 1, piece)) moves.Add(new PieceMove(piece, (currentPosition, currentPosition + 1)));
+            if (IsMoveValid(currentPosition - 1, piece)) moves.Add(new PieceMove(piece, (currentPosition, currentPosition - 1)));
         }
 
         public void ValidRookMoves(int currentPosition, Pieces piece)
