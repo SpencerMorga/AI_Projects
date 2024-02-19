@@ -10,18 +10,16 @@ namespace MiniMaxTrees
         public Node<OneDChess> Parent;
         public OneDChess chess;
         
+        
         public Node(OneDChess game)
         {
             chess = game;
         }
+
+        
     }
     public class MiniMaxTree<OneDChess>
     {
-        public Node<OneDChess> root;
-
-        public MiniMaxTree(Node<OneDChess> Root)
-        {
-            root = Root;
-        }
+        
     }
 }

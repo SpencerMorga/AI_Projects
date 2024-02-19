@@ -22,12 +22,12 @@ namespace MiniMaxTrees
         bool breakAll = false;
 
         [Flags]
-        enum GameState
+        public enum GameState
         {
             Terminal = 0B100,
             Win = 0,
             Tie = 1,
-            Loss = 0B10
+            Loss = 0B10 
         }
 
         [Flags]
@@ -43,8 +43,16 @@ namespace MiniMaxTrees
         {
             get
             {
-                if (current = ) //call IsWin/Loss/Draw and set currentstate accordingly
-            } 
+                //if (IsWin())
+                //{
+                //    return current = GameState.Win;
+                //}
+                //else if (IsLoss())
+                //{
+                //    return current = GameState.Loss;
+                //}
+                //return current = GameState.Tie;
+            }
         }
 
         public OneDChess(Pieces[] Board)
@@ -55,6 +63,7 @@ namespace MiniMaxTrees
         public Node<OneDChess>[] GetChildren()
         {
             FillMoves(); //fills moves with appropriate color based on turn
+            
 
             Node<OneDChess>[] children = new Node<OneDChess>[moves.Count];
 
@@ -78,7 +87,7 @@ namespace MiniMaxTrees
             return children;
         }
 
-        public void FillMoves()
+        public void FillMoves() //i could optimize but nah
         {
             for (int i = 0; i < board.Length; i++) // Fill Moves
             {
