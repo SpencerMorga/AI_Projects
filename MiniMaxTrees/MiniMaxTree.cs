@@ -4,21 +4,14 @@ using System.Text;
 
 namespace MiniMaxTrees
 {
-    public class Node<OneDChess>
+    public class Node<T> 
     {
-        public Node<OneDChess>[] Children;
-        public Node<OneDChess> Parent;
-        public OneDChess chess;
-        
-        
-        public Node(OneDChess game)
-        {
-            chess = game;
-        }
+        public Node<T>[] Children;
+        public Node<T> Parent;
+     
 
-        
     }
-    public class MiniMaxTree<OneDChess>
+    public class MiniMaxTree<T>
     {
         
     }

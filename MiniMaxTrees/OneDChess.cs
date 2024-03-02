@@ -11,8 +11,11 @@ using PieceMove =  System.Collections.Generic.KeyValuePair<MiniMaxTrees.OneDChes
 
 namespace MiniMaxTrees
 {
-    public class OneDChess
+    public class OneDChess : IGameState<OneDChess>
     {
+        //
+
+
         // FORWARD IS DEFINED AS THE NEGATIVE Y DIRECTION ON THE BOARD, WITH THE ONE SQUARE AT THE TOP AND THE EIGHT SQUARE AT THE BOTTOM
 
         Pieces[] board = new Pieces[8];
@@ -20,15 +23,6 @@ namespace MiniMaxTrees
         bool Turn = true; //true is white, false is black
         List<PieceMove> moves = new List<PieceMove>();
         bool breakAll = false;
-
-        [Flags]
-        public enum GameState
-        {
-            Terminal = 0B100,
-            Win = 0,
-            Tie = 1,
-            Loss = 0B10 
-        }
 
         [Flags]
         public enum Pieces : byte
@@ -39,19 +33,19 @@ namespace MiniMaxTrees
             IsWhite = 0B1000
         }
         
-        GameState MyState
+        public GameState MyState
         {
             get
             {
-                //if (IsWin())
-                //{
-                //    return current = GameState.Win;
-                //}
-                //else if (IsLoss())
-                //{
-                //    return current = GameState.Loss;
-                //}
-                //return current = GameState.Tie;
+                if (IsWin())
+                {
+                    return current = GameState.Win;
+                }
+                else if (IsLoss())
+                {
+                    return current = GameState.Loss;
+                }
+                return current = GameState.Tie;
             }
         }
 
@@ -60,12 +54,11 @@ namespace MiniMaxTrees
             board = Board;
         }
 
-        public Node<OneDChess>[] GetChildren()
+        public OneDChess[] GetChildren()
         {
             FillMoves(); //fills moves with appropriate color based on turn
-            
 
-            Node<OneDChess>[] children = new Node<OneDChess>[moves.Count];
+            OneDChess[] children = new OneDChess[moves.Count];
 
             for (int i = 0; i < moves.Count; i++)
             {
@@ -82,7 +75,7 @@ namespace MiniMaxTrees
                 
                 Move(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
 
-                children[i] = new Node<OneDChess>(new OneDChess(newBoard));
+                children[i] = new OneDChess(newBoard);
             }
             return children;
         }
@@ -173,7 +166,7 @@ namespace MiniMaxTrees
         {
             for (int j = 0; j < 8; j++)
             {
-                if (newBoard[j].HasFlag(Pieces.King) && (newBoard[j].HasFlag(Pieces.IsWhite)) == (moves[i].Key.HasFlag(Pieces.IsWhite))) //is the piece same color king?
+                if (newBoard[j].HasFlag(Pieces.King) && (newBoard[j].HasFlag(Pieces.IsWhite)) == (moves[j].Key.HasFlag(Pieces.IsWhite))) //is the piece same color king?
                 {
                     Move(testBoard, move.Value.Item1, move.Value.Item2);
 
