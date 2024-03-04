@@ -15,7 +15,7 @@ namespace MiniMaxTrees
         Tie = 1,
         Loss = 0B10
     }
-    internal interface IGameState<TSelf> where TSelf : IGameState<TSelf>
+    public interface IGameState<TSelf> where TSelf : IGameState<TSelf>
     {
         GameState MyState { get; }
         TSelf[] GetChildren();

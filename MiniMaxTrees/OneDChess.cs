@@ -13,14 +13,12 @@ namespace MiniMaxTrees
 {
     public class OneDChess : IGameState<OneDChess>
     {
-        //
-
-
+        //  
         // FORWARD IS DEFINED AS THE NEGATIVE Y DIRECTION ON THE BOARD, WITH THE ONE SQUARE AT THE TOP AND THE EIGHT SQUARE AT THE BOTTOM
 
         Pieces[] board = new Pieces[8];
         GameState current = new GameState();
-        bool Turn = true; //true is white, false is black
+        bool Turn; //true is white, false is black
         List<PieceMove> moves = new List<PieceMove>();
         bool breakAll = false;
 
@@ -49,9 +47,17 @@ namespace MiniMaxTrees
             }
         }
 
-        public OneDChess(Pieces[] Board)
+
+        public OneDChess()
+        {
+            board = new Pieces[] { Pieces.King & Pieces.IsWhite, (Pieces)0B1001, (Pieces)0B1010, 0B0, 0B0, (Pieces)0B10, (Pieces)0B1, (Pieces)0B100 };
+            Turn = true;
+        }
+
+        public OneDChess(Pieces[] Board, bool turn)
         {
             board = Board;
+            Turn = turn;
         }
 
         public OneDChess[] GetChildren()
@@ -75,7 +81,7 @@ namespace MiniMaxTrees
                 
                 Move(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
 
-                children[i] = new OneDChess(newBoard);
+                children[i] = new OneDChess(newBoard, Turn);
             }
             return children;
         }
