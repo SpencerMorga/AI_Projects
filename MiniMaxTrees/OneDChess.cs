@@ -43,7 +43,11 @@ namespace MiniMaxTrees
                 {
                     return current = GameState.Loss;
                 }
-                return current = GameState.Tie;
+                else if (IsDraw())
+                {
+                    return current = GameState.Tie;
+                }
+                return current = GameState.IsPlaying;
             }
         }
 

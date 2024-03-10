@@ -14,8 +14,11 @@ namespace MiniMaxTrees
             game = Game;
         }
     }
-    public class MiniMaxTree<TGame> where TGame 
+    public class MiniMaxTree<TGame> where TGame : IGameState<TGame>
     {
-        public int Minimax(IGameState<TGame>)
+        public int Minimax(IGameState<TGame> state, bool isMax)
+        {
+            if ()
+        }
     }
 }

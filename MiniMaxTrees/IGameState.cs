@@ -10,14 +10,15 @@ namespace MiniMaxTrees
     [Flags]
     public enum GameState
     {
-        Terminal = 0B100,
+        IsPlaying = 4,
         Win = 0,
         Tie = 1,
-        Loss = 0B10
+        Loss = 2
     }
     public interface IGameState<TSelf> where TSelf : IGameState<TSelf>
     {
         GameState MyState { get; }
+        bool isTerminal { get; }
         TSelf[] GetChildren();
     }
 }
