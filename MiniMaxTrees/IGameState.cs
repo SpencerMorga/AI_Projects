@@ -17,8 +17,9 @@ namespace MiniMaxTrees
     }
     public interface IGameState<TSelf> where TSelf : IGameState<TSelf>
     {
+        int Value { get; }
         GameState MyState { get; }
-        bool isTerminal { get; }
+        
         TSelf[] GetChildren();
     }
 }

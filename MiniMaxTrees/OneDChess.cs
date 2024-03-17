@@ -22,6 +22,8 @@ namespace MiniMaxTrees
         List<PieceMove> moves = new List<PieceMove>();
         bool breakAll = false;
 
+        public int Value { get; }
+
         [Flags]
         public enum Pieces : byte
         {
@@ -51,10 +53,10 @@ namespace MiniMaxTrees
             }
         }
 
-
         public OneDChess()
         {
             board = new Pieces[] { Pieces.King & Pieces.IsWhite, (Pieces)0B1001, (Pieces)0B1010, 0B0, 0B0, (Pieces)0B10, (Pieces)0B1, (Pieces)0B100 };
+            Value = 0;
             Turn = true;
         }
 
@@ -62,6 +64,7 @@ namespace MiniMaxTrees
         {
             board = Board;
             Turn = turn;
+            Value = 0;
         }
 
         public OneDChess[] GetChildren()
@@ -133,6 +136,7 @@ namespace MiniMaxTrees
             }
         }
 
+        public bool CheckGameOver() => IsWin() || IsLoss() || IsDraw();
         public bool IsWin()
         {
             for (int i = 0; i < board.Length; i++)
