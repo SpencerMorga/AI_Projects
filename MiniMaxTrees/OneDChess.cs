@@ -233,6 +233,8 @@ namespace MiniMaxTrees
                 board[newPosition] = board[currentPosition];
                 board[currentPosition] = 0;
             }
+
+            if (current.)
         }
 
         public void GetValidKnightMoves(int currentPosition, Pieces piece)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace MiniMaxTrees
@@ -19,6 +20,23 @@ namespace MiniMaxTrees
 
     public class MiniMaxTree<TGame> where TGame : IGameState<TGame>
     {
+        IGameState<TGame> current { get; }
+
+        Random rand = new Random();
+
+        public IGameState<TGame> OptimalMoves(bool isMax)
+        {
+            //eval moves - evaluates moves with minmax function
+            var evalMoves = current.GetChildren().ToList().Select(move => (state: move, value: Minimax(move, !isMax))).ToArray();
+
+            //ranked moves - ranks moves based on turn (isMax : high-low, !isMax : low-high)
+            var rankMoves = isMax ? evalMoves.OrderByDescending(move => move.value)  : evalMoves.OrderBy(move => move.value);
+
+            //optimal moves - select all moves with value equal to the first
+            var optMoves = rankMoves.Where(moves => (rankMoves.First().value == moves.value)).ToList();
+
+            return optMoves[rand.Next(optMoves.Count)].state;
+        }
         public int Minimax(IGameState<TGame> state, bool isMax, int min = int.MinValue, int max = int.MaxValue, int depth = 0)
         {
             //take in a game state, but use NODES to propagate the tree. during my recursion, my state parameter will be derived from the next child
