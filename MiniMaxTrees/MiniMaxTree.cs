@@ -20,14 +20,14 @@ namespace MiniMaxTrees
 
     public class MiniMaxTree<TGame> where TGame : IGameState<TGame>
     {
-        IGameState<TGame> current { get; }
+        protected virtual IGameState<TGame> Current { get; }
 
         Random rand = new Random();
 
-        public IGameState<TGame> OptimalMoves(bool isMax)
+        public IGameState<TGame> OptimalMove(bool isMax)
         {
             //eval moves - evaluates moves with minmax function
-            var evalMoves = current.GetChildren().ToList().Select(move => (state: move, value: Minimax(move, !isMax))).ToArray();
+            var evalMoves = Current.GetChildren().ToList().Select(move => (state: move, value: Minimax(move, !isMax))).ToArray();
 
             //ranked moves - ranks moves based on turn (isMax : high-low, !isMax : low-high)
             var rankMoves = isMax ? evalMoves.OrderByDescending(move => move.value)  : evalMoves.OrderBy(move => move.value);
@@ -42,7 +42,7 @@ namespace MiniMaxTrees
             //take in a game state, but use NODES to propagate the tree. during my recursion, my state parameter will be derived from the next child
             // store THE VALUE in the node, seperately from the state...?
 
-            if (state.MyState != GameState.IsPlaying)
+            if (!state.isTerminal)
             {
                 return state.Value;
             }

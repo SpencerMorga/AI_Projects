@@ -17,11 +17,14 @@ namespace MiniMaxTrees
         // FORWARD IS DEFINED AS THE NEGATIVE Y DIRECTION ON THE BOARD, WITH THE ONE SQUARE AT THE TOP AND THE EIGHT SQUARE AT THE BOTTOM
 
         Pieces[] board = new Pieces[8];
-        GameState current = new GameState();
+        
+        public Pieces[] getBoard() { return board; }
+
         bool Turn; //true is white, false is black
         List<PieceMove> moves = new List<PieceMove>();
         bool breakAll = false;
 
+        public bool isTerminal = false;
         public int Value { get; }
 
         [Flags]
@@ -33,25 +36,7 @@ namespace MiniMaxTrees
             IsWhite = 0B1000
         }
         
-        public GameState MyState
-        {
-            get
-            {
-                if (IsWin())
-                {
-                    return current = GameState.Win;
-                }
-                else if (IsLoss())
-                {
-                    return current = GameState.Loss;
-                }
-                else if (IsDraw())
-                {
-                    return current = GameState.Tie;
-                }
-                return current = GameState.IsPlaying;
-            }
-        }
+
 
         public OneDChess()
         {
@@ -86,7 +71,7 @@ namespace MiniMaxTrees
                     continue;
                 }
                 
-                Move(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
+                 LocalMove(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
 
                 children[i] = new OneDChess(newBoard, Turn);
             }
@@ -145,6 +130,7 @@ namespace MiniMaxTrees
                 {
                     if (IsInCheck(board[i]) && !CanBlockCheckmate(i))
                     {
+                        isTerminal = true;
                         return true;
                     }
                 }
@@ -160,6 +146,7 @@ namespace MiniMaxTrees
                 {
                     if (IsInCheck(board[i]) && !CanBlockCheckmate(i))
                     {
+                        isTerminal = true;
                         return true;
                     }
                 }
@@ -171,6 +158,7 @@ namespace MiniMaxTrees
         {
             if (moves.Count == 0)
             {
+                isTerminal = true;
                 return true;
             }
             return false;
@@ -182,7 +170,7 @@ namespace MiniMaxTrees
             {
                 if (newBoard[j].HasFlag(Pieces.King) && (newBoard[j].HasFlag(Pieces.IsWhite)) == (moves[j].Key.HasFlag(Pieces.IsWhite))) //is the piece same color king?
                 {
-                    Move(testBoard, move.Value.Item1, move.Value.Item2);
+                    LocalMove(testBoard, move.Value.Item1, move.Value.Item2);
 
                     if (IsInCheck(testBoard[j]))
                     {
@@ -205,7 +193,7 @@ namespace MiniMaxTrees
                 {
                     CopyArray(board, testBoard); //reset testBoard
 
-                    Move(testBoard, moves[j].Value.Item1, moves[j].Value.Item2); //make move
+                    LocalMove(testBoard, moves[j].Value.Item1, moves[j].Value.Item2); //make move
                     if (!IsInCheck(testBoard[kingPosition])) //if ischeckmate results in false, the move stays and no checkmate is made
                     {
                         //no checkmate
@@ -226,15 +214,26 @@ namespace MiniMaxTrees
             }
         }
 
-        public void Move(Pieces[] board, int currentPosition, int newPosition) 
+        private void LocalMove(Pieces[] board, int currentPosition, int newPosition) 
         {
             if (IsMoveValid(newPosition, board[currentPosition]) && !IsMoveACheck(newPosition, board[currentPosition]))
             {
                 board[newPosition] = board[currentPosition];
                 board[currentPosition] = 0;
             }
+        }
 
-            if (current.)
+        public OneDChess Move(Pieces[] board, int currentPositon, int newPosition)
+        {
+            //just in case if i want to, make sure moves contains this current move but i dont want to lol
+
+            Pieces[] newBoard = new Pieces[board.Length];
+            CopyArray(board, newBoard);
+
+            OneDChess newGame = new OneDChess(newBoard, !Turn);
+            newGame.LocalMove(newBoard, currentPositon, newPosition);
+
+            return newGame;
         }
 
         public void GetValidKnightMoves(int currentPosition, Pieces piece)
