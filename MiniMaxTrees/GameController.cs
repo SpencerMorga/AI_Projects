@@ -19,6 +19,13 @@ namespace MiniMaxTrees
 
         OneDChess current;
 
+        public GameController()
+        {
+            current = new OneDChess();
+        }
+
+        public bool GameOver => current.isTerminal;
+
         protected override IGameState<OneDChess> Current => current;
 
         public GameState MyState
@@ -48,7 +55,16 @@ namespace MiniMaxTrees
         {
             current = current.Move(current.getBoard(), currentPos, targetPos);
 
-            
+            if (current.isTerminal == false) { current = (OneDChess)OptimalMove(!current.Turn); }
+        }
+
+        public void Print()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                Console.Write($"[{OneDChess.Translate(current.getBoard()[i])}] ");
+            }
+            Console.WriteLine();
         }
     }
 }
