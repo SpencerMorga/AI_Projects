@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Transactions;
 
@@ -54,8 +53,17 @@ namespace MiniMaxTrees
         public void Move(int currentPos, int targetPos)
         {
             current = current.Move(current.getBoard(), currentPos, targetPos);
+            Console.WriteLine(current.Turn); //false
 
-            if (current.isTerminal == false) { current = (OneDChess)OptimalMove(!current.Turn); }
+
+            if (current.isTerminal == false)
+            {
+                current = (OneDChess)OptimalMove(current.Turn);
+            }
+
+            
+
+            Console.WriteLine(current.Turn); //true
         }
 
         public void Print()
@@ -64,6 +72,7 @@ namespace MiniMaxTrees
             {
                 Console.Write($"[{OneDChess.Translate(current.getBoard()[i])}] ");
             }
+            
             Console.WriteLine();
         }
     }

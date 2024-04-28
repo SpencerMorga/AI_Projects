@@ -20,7 +20,7 @@ namespace MiniMaxTrees
         
         public Pieces[] getBoard() { return board; }
 
-        public bool Turn { get; } //true is white, false is black
+        public bool Turn { get; } //true is black, false is white
         List<PieceMove> moves = new List<PieceMove>();
         bool breakAll = false;
 
@@ -40,6 +40,8 @@ namespace MiniMaxTrees
             }
 
             return ' ';
+
+
         }
 
         public bool isTerminal { get; private set; }
@@ -54,8 +56,6 @@ namespace MiniMaxTrees
             IsWhite = 0B1000
         }
         
-
-
         public OneDChess()
         {
             board = new Pieces[] { (Pieces)0B1100, (Pieces)0B1001, (Pieces)0B1010, 0B0, 0B0, (Pieces)0B10, (Pieces)0B1, (Pieces)0B100 };
@@ -71,8 +71,6 @@ namespace MiniMaxTrees
             Value = 0;
             isTerminal = false;
         }
-
-      
 
         public OneDChess[] GetChildren()
         {
@@ -95,7 +93,7 @@ namespace MiniMaxTrees
                 
                  LocalMove(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
 
-                children[i] = new OneDChess(newBoard, Turn);
+                children[i] = new OneDChess(newBoard, !Turn);
             }
             return children;
         }
@@ -238,7 +236,7 @@ namespace MiniMaxTrees
 
         private void LocalMove(Pieces[] board, int currentPosition, int newPosition) 
         {
-            if (IsMoveValid(newPosition, board[currentPosition]) && !IsMoveACheck(newPosition, board[currentPosition]))
+            if (IsMoveValid(newPosition, board[currentPosition]) && ! /* in check */ )
             {
                 board[newPosition] = board[currentPosition];
                 board[currentPosition] = 0;
@@ -289,11 +287,16 @@ namespace MiniMaxTrees
             }
         }
 
+        public bool 
+
         public bool IsMoveValid(int positionToMoveTo, Pieces piece)
         {
             positionToMoveTo -= 1;
             if (positionToMoveTo < 0) return false;
+
             return board[positionToMoveTo] == 0 || ((board[positionToMoveTo] > 0) && GetColor((byte)piece, 3) != GetColor((byte)board[positionToMoveTo], 3));
+
+
         }
 
         public bool IsMoveACheck(int positionToMoveTo, Pieces piece) //AS IS THE MOVE IS TAKING THE KING
@@ -301,11 +304,11 @@ namespace MiniMaxTrees
             return board[positionToMoveTo].HasFlag(Pieces.King) && IsMoveValid(positionToMoveTo, piece);
         }
 
-        public bool IsInCheck(Pieces piece) //MUST TAKE INTO KING
+        public bool IsInCheck(Pieces king) //MUST TAKE INTO KING
         {
             for (int i = 0; i < moves.Count; i++)
             {
-                if (moves[i].Key.HasFlag(Pieces.IsWhite) == piece.HasFlag(Pieces.IsWhite))
+                if (moves[i].Key.HasFlag(Pieces.IsWhite) != king.HasFlag(Pieces.IsWhite))
                 {
                     if (IsMoveACheck(moves[i].Value.Item2, moves[i].Key))
                     {

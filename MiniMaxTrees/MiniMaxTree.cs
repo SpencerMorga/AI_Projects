@@ -30,24 +30,17 @@ namespace MiniMaxTrees
             var evalMoves = Current.GetChildren().ToList().Select(move => (state: move, value: Minimax(move, isMax))).ToArray();
 
             //ranked moves - ranks moves based on turn (isMax : high-low, !isMax : low-high)
-            var rankMoves = isMax ? evalMoves.OrderByDescending(move => move.value)  : evalMoves.OrderBy(move => move.value);
+            var rankMoves = isMax ? evalMoves.OrderByDescending(move => move.value) : evalMoves.OrderBy(move => move.value);
 
             //optimal moves - select all moves with value equal to the first
-             var optMoves = rankMoves.Where(moves => (rankMoves.First().value == moves.value)).ToList();
-
-            //var optMoves = new List<TGame>();
-
-            //for (int i = 0; i < rankMoves.Count(); i++)
-            //{
-            //    if (rankMoves[i] == rankMoves.First(0))
-            //}
+            var optMoves = rankMoves.Where(moves => (rankMoves.First().value == moves.value)).ToList();
 
             return optMoves[rand.Next(optMoves.Count)].state;
         }
         public int Minimax(IGameState<TGame> state, bool isMax, int min = int.MinValue, int max = int.MaxValue, int depth = 0)
         {
-            //take in a game state, but use NODES to propagate the tree. during my recursion, my state parameter will be derived from the next child
-            // store THE VALUE in the node, seperately from the state...?
+            //   take in a game state, but use NODES to propagate the tree. during my recursion, my state parameter will be derived from the next child
+            //   store THE VALUE in the node, seperately from the state...?
 
             if (!state.isTerminal)
             {
@@ -60,7 +53,7 @@ namespace MiniMaxTrees
 
                 foreach (var move in state.GetChildren())
                 {
-                    value = Math.Max(value, Minimax(move, false, min, max, depth + 1));
+                    value = Math.Max(value, Minimax(move, isMax, min, max, depth + 1));
                     min = Math.Max(min, value);
                     if (min >= max)
                     {
@@ -76,7 +69,7 @@ namespace MiniMaxTrees
 
                 foreach (var move in state.GetChildren())
                 {
-                    value = Math.Min(value, Minimax(move, true, min, max, depth + 1));
+                    value = Math.Min(value, Minimax(move, !isMax, min, max, depth + 1));
                     max = Math.Min(max, value);
                     if (min >= max)
                     {
