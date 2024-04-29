@@ -38,10 +38,8 @@ namespace MiniMaxTrees
                 else if (piece.HasFlag(Pieces.Rook)) return 'r';
                 else if (piece.HasFlag(Pieces.King)) return 'k';
             }
-
+            
             return ' ';
-
-
         }
 
         public bool isTerminal { get; private set; }
@@ -91,7 +89,7 @@ namespace MiniMaxTrees
                     continue;
                 }
                 
-                 LocalMove(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
+                LocalMove(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
 
                 children[i] = new OneDChess(newBoard, !Turn);
             }
@@ -184,7 +182,7 @@ namespace MiniMaxTrees
             return false;
         }
 
-        public bool DoesMoveEndangerKing(ref Pieces[] newBoard, ref Pieces[] testBoard, PieceMove move)
+        public bool DoesMoveEndangerKing(ref Pieces[] newBoard, ref Pieces[] testBoard, PieceMove move) //DOES NOT WORK??? 
         {
             for (int j = 0; j < 8; j++)
             {
@@ -236,16 +234,32 @@ namespace MiniMaxTrees
 
         private void LocalMove(Pieces[] board, int currentPosition, int newPosition) 
         {
-            if (IsMoveValid(newPosition, board[currentPosition]) && ! /* in check */ )
+            if (IsMoveValid(newPosition, board[currentPosition]) && !IsOwnKingInCheck())
             {
                 board[newPosition] = board[currentPosition];
                 board[currentPosition] = 0;
             }
         }
 
+        public bool IsOwnKingInCheck()
+        {
+            for (int i = 0; i < board.Length; i++)
+            {
+                if (board[i].HasFlag(Pieces.King) && (board[i].HasFlag(Pieces.IsWhite) == Turn))
+                {
+                    if (IsInCheck(board[i]))
+                    {
+                        Console.WriteLine(" !!!! CHECK !!!! ");
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public OneDChess Move(Pieces[] board, int currentPositon, int newPosition)
         {
-            //just in case if i want to, make sure moves contains this current move but i dont want to lol
+            //just in case if i want to, make sure moves contains this current move
 
             Pieces[] newBoard = new Pieces[board.Length];
             CopyArray(board, newBoard);
@@ -287,8 +301,7 @@ namespace MiniMaxTrees
             }
         }
 
-        public bool 
-
+        
         public bool IsMoveValid(int positionToMoveTo, Pieces piece)
         {
             positionToMoveTo -= 1;
@@ -312,6 +325,7 @@ namespace MiniMaxTrees
                 {
                     if (IsMoveACheck(moves[i].Value.Item2, moves[i].Key))
                     {
+                        Console.WriteLine("CHECK");
                         return true;
                     }
                 }
