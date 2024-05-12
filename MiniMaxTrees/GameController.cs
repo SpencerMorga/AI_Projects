@@ -58,12 +58,14 @@ namespace MiniMaxTrees
 
             if (current.isTerminal == false)
             {
+               // current.Turn = !current.Turn;
                 current = (OneDChess)OptimalMove(current.Turn);
             }
 
-            
 
+            
             Console.WriteLine(current.Turn); //true
+            current.Turn = !current.Turn;
         }
 
         public void Print()
