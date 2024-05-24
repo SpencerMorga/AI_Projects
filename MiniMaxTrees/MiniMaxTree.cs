@@ -27,7 +27,9 @@ namespace MiniMaxTrees
         public IGameState<TGame> OptimalMove(bool isMax)
         {
             //eval moves - evaluates moves with minmax function
-            var evalMoves = Current.GetChildren().ToList().Select(move => (state: move, value: Minimax(move, isMax))).ToArray();
+
+            var children = Current.GetChildren();
+            var evalMoves = children.ToList().Select(move => (state: move, value: Minimax(move, isMax))).ToArray();
 
             //ranked moves - ranks moves based on turn (isMax : high-low, !isMax : low-high)
             var rankMoves = isMax ? evalMoves.OrderByDescending(move => move.value) : evalMoves.OrderBy(move => move.value);

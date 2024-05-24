@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using static MiniMaxTrees.OneDChess;
 
-using PieceMove =  System.Collections.Generic.KeyValuePair<MiniMaxTrees.OneDChess.Pieces, (int, int)>;
+using PieceMove = System.Collections.Generic.KeyValuePair<MiniMaxTrees.OneDChess.Pieces, (int, int)>;
 
 namespace MiniMaxTrees
 {
@@ -17,9 +17,10 @@ namespace MiniMaxTrees
         // FORWARD IS DEFINED AS THE NEGATIVE Y DIRECTION ON THE BOARD, WITH THE ONE SQUARE AT THE TOP AND THE EIGHT SQUARE AT THE BOTTOM
 
         Pieces[] board = new Pieces[8];
-        
+
         public Pieces[] getBoard() { return board; }
 
+        public string ReadableTurn => Turn == true ? "Black" : "White";
         public bool Turn { get; set; } //true is black, false is white !=
         List<PieceMove> moves = new List<PieceMove>();
         bool breakAll = false;
@@ -38,7 +39,7 @@ namespace MiniMaxTrees
                 else if (piece.HasFlag(Pieces.Rook)) return 'r';
                 else if (piece.HasFlag(Pieces.King)) return 'k';
             }
-            
+
             return ' ';
         }
 
@@ -53,7 +54,7 @@ namespace MiniMaxTrees
             King = 0B100,
             IsWhite = 0B1000
         }
-        
+
         public OneDChess()
         {
             board = new Pieces[] { (Pieces)0B1100, (Pieces)0B1001, (Pieces)0B1010, 0B0, 0B0, (Pieces)0B10, (Pieces)0B1, (Pieces)0B100 };
@@ -88,7 +89,7 @@ namespace MiniMaxTrees
                 {
                     continue;
                 }
-                
+
                 LocalMove(newBoard, moves[i].Value.Item1, moves[i].Value.Item2);
 
                 children[i] = new OneDChess(newBoard, !Turn);
@@ -100,8 +101,24 @@ namespace MiniMaxTrees
         {
             for (int i = 0; i < board.Length; i++) // Fill Moves
             {
-                if (Turn)
-                {
+                //if (Turn != board[i].HasFlag(Pieces.IsWhite))
+                //{
+                //    if (board[i].HasFlag(Pieces.King))
+                //    {
+                //        //GetValidKingMoves(i, board[i]);
+                //    }
+                //    if (board[i].HasFlag(Pieces.Knight))
+                //    {
+                //       // GetValidKnightMoves(i, board[i]);
+                //    }
+                //    if (board[i].HasFlag(Pieces.Rook))
+                //    {
+                //      //  ValidRookMoves(i, board[i]);
+                //    }
+                //}
+
+                if (!Turn) //make pretty
+                { //turn = false && white
                     if (board[i].HasFlag(Pieces.IsWhite))
                     {
                         if (board[i].HasFlag(Pieces.King))
@@ -119,7 +136,7 @@ namespace MiniMaxTrees
                     }
                 }
                 else
-                {
+                { //turn is true && !white
                     if (!board[i].HasFlag(Pieces.IsWhite))
                     {
                         if (board[i].HasFlag(Pieces.King))
@@ -232,7 +249,7 @@ namespace MiniMaxTrees
             }
         }
 
-        private void LocalMove(Pieces[] board, int currentPosition, int newPosition) 
+        private void LocalMove(Pieces[] board, int currentPosition, int newPosition)
         {
             if (IsMoveValid(newPosition, board[currentPosition]) && !IsOwnKingInCheck())
             {
@@ -276,32 +293,56 @@ namespace MiniMaxTrees
             if (IsMoveValid(currentPosition - 2, piece)) moves.Add(new PieceMove(piece, (currentPosition, currentPosition - 2)));
         }
 
-        public void GetValidKingMoves(int currentPosition, Pieces piece) 
+        public void GetValidKingMoves(int currentPosition, Pieces piece)
         {
             if (IsMoveValid(currentPosition + 1, piece)) moves.Add(new PieceMove(piece, (currentPosition, currentPosition + 1)));
             if (IsMoveValid(currentPosition - 1, piece)) moves.Add(new PieceMove(piece, (currentPosition, currentPosition - 1)));
         }
 
         public void ValidRookMoves(int currentPosition, Pieces piece)
-        { 
-            int i = currentPosition+1;
+        {
+            int i = currentPosition + 1;
             while (i < 8)
             {
-                if (board[i] != 0) break;
-                if(IsMoveValid(i, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, i)));
+                if (board[i] != 0)
+                {
+                    if (board[i].HasFlag(Pieces.IsWhite) == piece.HasFlag(Pieces.IsWhite)) //if hits same color piece
+                    {
+                        break;
+                    }
+                    else if ((board[i].HasFlag(Pieces.IsWhite) == piece.HasFlag(Pieces.IsWhite)) && !board[i].HasFlag(Pieces.King)) //if hits takeable opposite color piece
+                    {
+                        if (IsMoveValid(i, piece)) moves.Add(new PieceMove(piece, (currentPosition, i)));
+                        break;
+                    }
+                }
+
+                if (IsMoveValid(i, piece)) moves.Add(new PieceMove(piece, (currentPosition, i)));
                 i++;
             }
 
-            int j = currentPosition-1;
+            int j = currentPosition - 1;
             while (j > 0)
             {
-                if (board[j] != 0) break;
-                if (IsMoveValid(j, piece)) moves.Add(new KeyValuePair<Pieces, (int, int)>(piece, (currentPosition, j)));
-                j--;
+                if (board[j] != 0)
+                {
+                    if (board[j].HasFlag(Pieces.IsWhite) == piece.HasFlag(Pieces.IsWhite)) //if hits same color piece
+                    {
+                        break;
+                    }
+                    else if ((board[j].HasFlag(Pieces.IsWhite) == piece.HasFlag(Pieces.IsWhite)) && !board[j].HasFlag(Pieces.King)) //if hits takeable opposite color piece
+                    {
+                        if (IsMoveValid(j, piece)) moves.Add(new PieceMove(piece, (currentPosition, j)));
+                        break;
+                    }
+                }
+
+                if (IsMoveValid(j, piece)) moves.Add(new PieceMove(piece, (currentPosition, j)));
+                j++;
             }
         }
 
-        
+
         public bool IsMoveValid(int positionToMoveTo, Pieces piece)
         {
             //positionToMoveTo -= 1;
@@ -315,9 +356,9 @@ namespace MiniMaxTrees
 
         public bool IsMoveACheck(int positionToMoveTo, Pieces piece) //AS IS THE MOVE IS TAKING THE KING
         {
-            Console.WriteLine("CHECK");
+
             return board[positionToMoveTo].HasFlag(Pieces.King) && IsMoveValid(positionToMoveTo, piece);
-            
+
         }
 
         public bool IsInCheck(Pieces king) //MUST TAKE INTO KING
@@ -342,6 +383,6 @@ namespace MiniMaxTrees
             return (byteToConvert & mask) == mask;
         }
 
-        
+
     }
 }
