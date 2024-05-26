@@ -44,9 +44,10 @@ namespace MiniMaxTrees
             //   take in a game state, but use NODES to propagate the tree. during my recursion, my state parameter will be derived from the next child
             //   store THE VALUE in the node, seperately from the state...?
 
-            if (!state.isTerminal)
+            if (state.isTerminal)
             {
                 return state.Value;
+                //return state.Value + (!isMax ? depth : -depth);
             }
 
             if (isMax)
@@ -55,7 +56,7 @@ namespace MiniMaxTrees
 
                 foreach (var move in state.GetChildren())
                 {
-                    value = Math.Max(value, Minimax(move, isMax, min, max, depth + 1));
+                    value = Math.Max(value, Minimax(move, !isMax, min, max, depth + 1));
                     min = Math.Max(min, value);
                     if (min >= max)
                     {
@@ -71,7 +72,7 @@ namespace MiniMaxTrees
 
                 foreach (var move in state.GetChildren())
                 {
-                    value = Math.Min(value, Minimax(move, !isMax, min, max, depth + 1));
+                    value = Math.Min(value, Minimax(move, isMax, min, max, depth + 1));
                     max = Math.Min(max, value);
                     if (min >= max)
                     {

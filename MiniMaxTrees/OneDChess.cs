@@ -203,14 +203,17 @@ namespace MiniMaxTrees
         {
             for (int j = 0; j < 8; j++)
             {
-                if (newBoard[j].HasFlag(Pieces.King) && (newBoard[j].HasFlag(Pieces.IsWhite)) == (move.Key.HasFlag(Pieces.IsWhite))) //is the piece same color king?
+                if (newBoard[j].HasFlag(Pieces.King)) //is the piece same color king?
                 {
-                    LocalMove(testBoard, move.Value.Item1, move.Value.Item2);
-
-                    if (IsInCheck(testBoard[j]))
+                    if (newBoard[j].HasFlag(Pieces.IsWhite) == move.Key.HasFlag(Pieces.IsWhite))
                     {
-                        CopyArray(newBoard, testBoard); // reset testBoard
-                        return true;
+                        LocalMove(testBoard, move.Value.Item1, move.Value.Item2);
+
+                        if (IsInCheck(testBoard[j]))
+                        {
+                            CopyArray(newBoard, testBoard); // reset testBoard
+                            return true;
+                        }
                     }
                 }
             }
@@ -262,12 +265,15 @@ namespace MiniMaxTrees
         {
             for (int i = 0; i < board.Length; i++)
             {
-                if (board[i].HasFlag(Pieces.King) && (board[i].HasFlag(Pieces.IsWhite) == Turn))
+                if (board[i].HasFlag(Pieces.King))
                 {
-                    if (IsInCheck(board[i]))
+                    if (board[i].HasFlag(Pieces.IsWhite) != Turn)
                     {
-                        Console.WriteLine(" !!!! CHECK !!!! ");
-                        return true;
+                        if (IsInCheck(board[i]))
+                        {
+                            Console.WriteLine(" !!!! CHECK !!!! ");
+                            return true;
+                        }
                     }
                 }
             }
@@ -310,7 +316,7 @@ namespace MiniMaxTrees
                     {
                         break;
                     }
-                    else if ((board[i].HasFlag(Pieces.IsWhite) == piece.HasFlag(Pieces.IsWhite)) && !board[i].HasFlag(Pieces.King)) //if hits takeable opposite color piece
+                    else if ((board[i].HasFlag(Pieces.IsWhite) != piece.HasFlag(Pieces.IsWhite)) && !board[i].HasFlag(Pieces.King)) //if hits takeable opposite color piece
                     {
                         if (IsMoveValid(i, piece)) moves.Add(new PieceMove(piece, (currentPosition, i)));
                         break;
@@ -330,7 +336,7 @@ namespace MiniMaxTrees
                     {
                         break;
                     }
-                    else if ((board[j].HasFlag(Pieces.IsWhite) == piece.HasFlag(Pieces.IsWhite)) && !board[j].HasFlag(Pieces.King)) //if hits takeable opposite color piece
+                    else if ((board[j].HasFlag(Pieces.IsWhite) != piece.HasFlag(Pieces.IsWhite)) && !board[j].HasFlag(Pieces.King)) //if hits takeable opposite color piece
                     {
                         if (IsMoveValid(j, piece)) moves.Add(new PieceMove(piece, (currentPosition, j)));
                         break;
@@ -338,7 +344,7 @@ namespace MiniMaxTrees
                 }
 
                 if (IsMoveValid(j, piece)) moves.Add(new PieceMove(piece, (currentPosition, j)));
-                j++;
+                j--;
             }
         }
 
@@ -348,7 +354,7 @@ namespace MiniMaxTrees
             //positionToMoveTo -= 1;
             if (positionToMoveTo < 0 || positionToMoveTo >= 8) return false;
 
-            return board[positionToMoveTo] == 0 || ((board[positionToMoveTo] > 0) && GetColor((byte)piece, 3) != GetColor((byte)board[positionToMoveTo], 3));
+            return board[positionToMoveTo] == 0 || ((board[positionToMoveTo] > 0) && (GetColor((byte)piece, 3) != GetColor((byte)board[positionToMoveTo], 3)) && !board[positionToMoveTo].HasFlag(Pieces.King));
 
 
 
