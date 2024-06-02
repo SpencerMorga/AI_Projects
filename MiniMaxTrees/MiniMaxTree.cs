@@ -72,7 +72,7 @@ namespace MiniMaxTrees
 
                 foreach (var move in state.GetChildren())
                 {
-                    value = Math.Min(value, Minimax(move, isMax, min, max, depth + 1));
+                    value = Math.Min(value, Minimax(move, !isMax, min, max, depth + 1));
                     max = Math.Min(max, value);
                     if (min >= max)
                     {

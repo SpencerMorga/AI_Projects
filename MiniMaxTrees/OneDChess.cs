@@ -74,6 +74,7 @@ namespace MiniMaxTrees
         public OneDChess[] GetChildren()
         {
             FillMoves(); //fills moves with appropriate color based on turn
+            CheckGameOver();
 
             OneDChess[] children = new OneDChess[moves.Count];
 
@@ -161,7 +162,7 @@ namespace MiniMaxTrees
         {
             for (int i = 0; i < board.Length; i++)
             {
-                if (board[i].HasFlag(Pieces.King) && (board[i].HasFlag(Pieces.IsWhite) != Turn)) //find OPP king
+                if (board[i].HasFlag(Pieces.King) && (board[i].HasFlag(Pieces.IsWhite) == Turn)) //find OPP king
                 {
                     if (IsInCheck(board[i]) && !CanBlockCheckmate(i))
                     {
@@ -177,7 +178,7 @@ namespace MiniMaxTrees
         {
             for (int i = 0; i < board.Length; i++)
             {
-                if (board[i].HasFlag(Pieces.King) && (board[i].HasFlag(Pieces.IsWhite)) == Turn) //find same color king♫
+                if (board[i].HasFlag(Pieces.King) && (board[i].HasFlag(Pieces.IsWhite)) != Turn) //find same color king♫
                 {
                     if (IsInCheck(board[i]) && !CanBlockCheckmate(i))
                     {
@@ -191,6 +192,22 @@ namespace MiniMaxTrees
 
         public bool IsDraw()
         {
+            bool isRook = false;
+            for (int i = 0; i < board.Length; i++)
+            {
+                if (board[i] == Pieces.Rook)
+                {
+                    isRook = true;
+                }
+            }
+
+            if (!isRook)
+            {
+                isTerminal = true;
+                return true;
+            }
+
+
             if (moves.Count == 0)
             {
                 isTerminal = true;
@@ -212,6 +229,7 @@ namespace MiniMaxTrees
                         if (IsInCheck(testBoard[j]))
                         {
                             CopyArray(newBoard, testBoard); // reset testBoard
+                            //isTerminal = true;
                             return true;
                         }
                     }
